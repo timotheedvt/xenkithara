@@ -24,6 +24,143 @@ const TheoryEngine = {
         "Pentatonic Minor": [3, 2, 2, 3]        // Pentatonic Minor
     },
 
+    modes_24: {
+        "Anchihoye: Ethiopia": [2, 8, 3, 6, 5],
+        "Quasi-equal Pentatonic": [5, 5, 4, 5, 5],
+        "Hába's Pentatonic": [5, 5, 5, 5, 4],
+        "Spondeiakos": [1, 1, 8, 4, 2, 8],
+        "Enharmonic Mixolydian": [1, 1, 8, 1, 1, 8, 4],
+        "Enharmonic Lydian": [1, 8, 1, 1, 8, 4, 1],
+        "Enharmonic Phrygian": [8, 1, 1, 8, 4, 1, 1],
+        "Enharmonic Dorian": [1, 1, 8, 4, 1, 1, 8],
+        "Enharmonic Hypolydian": [1, 8, 4, 1, 1, 8, 1],
+        "Enharmonic Hypophrygian": [8, 4, 1, 1, 8, 1, 1],
+        "Enharmonic Hypodorian": [4, 1, 1, 8, 1, 1, 8],
+        "Soft Diatonic Mixolydian": [2, 3, 5, 2, 3, 5, 4],
+        "Soft Diatonic Lydian": [3, 5, 2, 3, 5, 4, 2],
+        "Soft Diatonic Phrygian": [5, 2, 3, 5, 4, 2, 3],
+        "Soft Diatonic Dorian": [2, 3, 5, 4, 2, 3, 5],
+        "Soft Diatonic Hypolydian": [3, 5, 4, 2, 3, 5, 2],
+        "Soft Diatonic Hypophrygian": [5, 4, 2, 3, 5, 2, 3],
+        "Soft Diatonic Hypodorian": [4, 2, 3, 5, 2, 3, 5],
+        "Maqam Ouchairan-Hussaini": [3, 3, 4, 3, 3, 4, 4],
+        "Dastgah-e Sehgah": [3, 4, 3, 3, 4, 4, 3],
+        "Arabic Diatonic": [4, 3, 3, 4, 4, 3, 3],
+        "Maqam Hussaini": [3, 3, 4, 4, 3, 3, 4],
+        "Maqam Sikah": [3, 4, 4, 3, 3, 4, 3],
+        "Neutral Diatonic Hypophrygian": [4, 4, 3, 3, 4, 3, 3],
+        "Miha'il Musaqa's mode": [4, 3, 3, 4, 3, 3, 4],
+        "Diatonic + Enharmonic Diesis Mixolydian": [1, 5, 4, 1, 5, 4, 4],
+        "Diatonic + Enharmonic Diesis Lydian": [5, 4, 1, 5, 4, 4, 1],
+        "Diatonic + Enharmonic Diesis Phrygian": [4, 1, 5, 4, 4, 1, 5],
+        "Diatonic + Enharmonic Diesis Dorian": [1, 5, 4, 4, 1, 5, 4],
+        "Diatonic + Enharmonic Diesis Hypolydian": [5, 4, 4, 1, 5, 4, 1],
+        "Diatonic + Enharmonic Diesis Hypophrygian": [4, 4, 1, 5, 4, 1, 5],
+        "Diatonic + Enharmonic Diesis Hypodorian": [4, 1, 5, 4, 1, 5, 4],
+        "Chromatic/Enharmonic Mixolydian": [1, 3, 6, 1, 3, 6, 4],
+        "Chromatic/Enharmonic Lydian": [3, 6, 1, 3, 6, 4, 1],
+        "Chromatic/Enharmonic Phrygian": [6, 1, 3, 6, 4, 1, 3],
+        "Chromatic/Enharmonic Dorian": [1, 3, 6, 4, 1, 3, 6],
+        "Chromatic/Enharmonic Hypolydian": [3, 6, 4, 1, 3, 6, 1],
+        "Chromatic/Enharmonic Hypophrygian": [6, 4, 1, 3, 6, 1, 3],
+        "Chromatic/Enharmonic Hypodorian": [4, 1, 3, 6, 1, 3, 6],
+        "Neutral Mixolydian": [3, 4, 3, 3, 4, 3, 4],
+        "Neutral Lydian": [4, 3, 3, 4, 3, 4, 3],
+        "Neutral Phrygian": [3, 3, 4, 3, 4, 3, 4],
+        "Neutral Dorian": [3, 4, 3, 4, 3, 4, 3],
+        "Neutral Hypolydian": [4, 3, 4, 3, 4, 3, 3],
+        "Neutral Hypophrygian": [3, 4, 3, 4, 3, 3, 4],
+        "Neutral Hypodorian": [4, 3, 4, 3, 3, 4, 3],
+        "Athanasopoulos' Byzantine Liturgical Chromatic": [3, 5, 2, 4, 3, 5, 2],
+        "Dastgah-e Nava": [4, 2, 4, 4, 3, 3, 4],
+        "Second plagal Byzantine Liturgical mode": [2, 7, 1, 4, 2, 7, 1],
+        "Maqam 'Ushshaq Turki": [3, 3, 4, 4, 2, 4, 4],
+        "Maqam Nahfat": [3, 3, 4, 4, 4, 2, 4],
+        "Maqam Saba": [3, 3, 2, 6, 2, 4, 4],
+        "Maqam Sabr Jadid": [3, 3, 2, 6, 2, 6, 2],
+        "Maqam Suznak": [4, 3, 3, 4, 2, 6, 2],
+        "Maqam Mahur": [4, 3, 3, 4, 4, 4, 2],
+        "Maqam Qarjighar": [3, 3, 4, 2, 6, 2, 4],
+        "Maqam Hizam": [3, 4, 2, 6, 2, 4, 3],
+        "Maqam Nawa": [2, 4, 4, 4, 3, 3, 4],
+        "Maqam Higaz-kar": [2, 5, 3, 4, 2, 5, 3],
+        "Maqam Su'ar": [3, 4, 4, 2, 4, 4, 3],
+        "Maqam Jahargah": [4, 4, 2, 4, 4, 3, 3],
+        "Dastgah-e Homayun": [3, 5, 2, 4, 2, 4, 4],
+        "Naghmeh Esfahan": [4, 2, 4, 4, 3, 5, 2],
+        "Maqam 'Awg 'ara": [3, 6, 1, 5, 2, 6, 1],
+        "Maqam Buselik": [4, 1, 5, 4, 2, 6, 2],
+        "Maqam Neuter": [4, 2, 6, 2, 2, 5, 3],
+        "Dance scale of Yi people": [4, 3, 3, 4, 4, 2, 4],
+        "Daniel-mode": [4, 4, 2, 3, 1, 4, 6],
+        "8-equal": [3, 3, 3, 3, 3, 3, 3, 3],
+        "Maqam Bayati (Octatonic)": [3, 3, 4, 4, 2, 1, 3, 4],
+        "Maqam Saba (Octatonic)": [3, 3, 2, 6, 2, 4, 2, 2],
+        "Maqam Suzidil 'ara": [4, 3, 1, 2, 4, 4, 2, 4],
+        "Maqam Mansuri": [3, 3, 2, 2, 4, 3, 3, 4],
+        "Maqam Rast (Octatonic)": [4, 3, 3, 4, 4, 2, 1, 3],
+        "Maqam Rahat al-Arwah": [3, 4, 2, 6, 2, 4, 2, 1],
+        "Maqam Iraq": [3, 4, 3, 3, 4, 4, 2, 1],
+        "Maqam Hijaz": [2, 6, 2, 4, 2, 1, 3, 4],
+        "Maqam Musta'ar": [3, 4, 4, 2, 1, 3, 4, 3],
+        "Maqam Farahnak": [3, 4, 4, 4, 2, 4, 2, 1],
+        "Maqam Bastanikar": [3, 4, 3, 3, 2, 6, 2, 1],
+        "Maqam Farah Faza": [4, 2, 6, 2, 4, 2, 1, 3],
+        "Maqam Jabburi": [3, 1, 2, 4, 4, 2, 4, 4],
+        "Giancarlo Dalmonte's scale": [1, 4, 4, 2, 4, 4, 4, 1],
+        "Progressive Enneatonic": [1, 2, 3, 4, 4, 1, 2, 3, 4],
+        "de Vries 9-tone": [4, 1, 4, 1, 4, 1, 4, 1, 4],
+        "Maqam Huzam (Enneatonic)": [3, 4, 2, 2, 2, 2, 2, 4, 3],
+        "Maqam Shawq Afza": [4, 4, 2, 1, 3, 2, 2, 4, 2],
+        "Breed Decatonic": [3, 1, 3, 3, 3, 1, 3, 3, 1, 3],
+        "Oljare Decatonic": [2, 3, 2, 2, 3, 2, 3, 2, 2, 3],
+        "Maqam Shawq Tarab": [2, 1, 3, 2, 2, 4, 2, 4, 2, 2],
+        "Maqam Basandida": [4, 2, 1, 3, 2, 2, 4, 2, 1, 3],
+        "Maqam Yakah": [4, 3, 1, 2, 1, 3, 4, 2, 1, 3],
+        "Maqam Hayyan": [4, 2, 1, 3, 2, 2, 2, 2, 3, 1, 2],
+        "de Vries 13-tone": [1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2],
+        "Agmon Diatonic DS5": [2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1],
+        "Young Half-Octave Diatonic": [2, 2, 1, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 1]
+    },
+
+    modes_24_categories: {
+        "Pentatonic (5)": ["Anchihoye: Ethiopia", "Quasi-equal Pentatonic", "Hába's Pentatonic"],
+        "Hexatonic (6)": ["Spondeiakos"],
+        "Heptatonic (7)": [
+            "Enharmonic Mixolydian", "Enharmonic Lydian", "Enharmonic Phrygian", "Enharmonic Dorian",
+            "Enharmonic Hypolydian", "Enharmonic Hypophrygian", "Enharmonic Hypodorian",
+            "Soft Diatonic Mixolydian", "Soft Diatonic Lydian", "Soft Diatonic Phrygian", "Soft Diatonic Dorian",
+            "Soft Diatonic Hypolydian", "Soft Diatonic Hypophrygian", "Soft Diatonic Hypodorian",
+            "Maqam Ouchairan-Hussaini", "Dastgah-e Sehgah", "Arabic Diatonic", "Maqam Hussaini", "Maqam Sikah",
+            "Neutral Diatonic Hypophrygian", "Miha'il Musaqa's mode", "Diatonic + Enharmonic Diesis Mixolydian",
+            "Diatonic + Enharmonic Diesis Lydian", "Diatonic + Enharmonic Diesis Phrygian", "Diatonic + Enharmonic Diesis Dorian",
+            "Diatonic + Enharmonic Diesis Hypolydian", "Diatonic + Enharmonic Diesis Hypophrygian", "Diatonic + Enharmonic Diesis Hypodorian",
+            "Chromatic/Enharmonic Mixolydian", "Chromatic/Enharmonic Lydian", "Chromatic/Enharmonic Phrygian",
+            "Chromatic/Enharmonic Dorian", "Chromatic/Enharmonic Hypolydian", "Chromatic/Enharmonic Hypophrygian",
+            "Chromatic/Enharmonic Hypodorian", "Neutral Mixolydian", "Neutral Lydian", "Neutral Phrygian",
+            "Neutral Dorian", "Neutral Hypolydian", "Neutral Hypophrygian", "Neutral Hypodorian",
+            "Athanasopoulos' Byzantine Liturgical Chromatic", "Dastgah-e Nava", "Second plagal Byzantine Liturgical mode",
+            "Maqam 'Ushshaq Turki", "Maqam Nahfat", "Maqam Saba", "Maqam Sabr Jadid", "Maqam Suznak", "Maqam Mahur",
+            "Maqam Qarjighar", "Maqam Hizam", "Maqam Nawa", "Maqam Higaz-kar", "Maqam Su'ar", "Maqam Jahargah",
+            "Dastgah-e Homayun", "Naghmeh Esfahan", "Maqam 'Awg 'ara", "Maqam Buselik", "Maqam Neuter",
+            "Dance scale of Yi people", "Daniel-mode"
+        ],
+        "Octatonic (8)": [
+            "8-equal", "Maqam Bayati (Octatonic)", "Maqam Saba (Octatonic)", "Maqam Suzidil 'ara", "Maqam Mansuri",
+            "Maqam Rast (Octatonic)", "Maqam Rahat al-Arwah", "Maqam Iraq", "Maqam Hijaz", "Maqam Musta'ar",
+            "Maqam Farahnak", "Maqam Bastanikar", "Maqam Farah Faza", "Maqam Jabburi", "Giancarlo Dalmonte's scale"
+        ],
+        "Enneatonic (9)": [
+            "Progressive Enneatonic", "de Vries 9-tone", "Maqam Huzam (Enneatonic)", "Maqam Shawq Afza"
+        ],
+        "Decatonic (10)": [
+            "Breed Decatonic", "Oljare Decatonic", "Maqam Shawq Tarab", "Maqam Basandida", "Maqam Yakah"
+        ],
+        "Hendecatonic (11)": ["Maqam Hayyan"],
+        "Tridecatonic (13)": ["de Vries 13-tone", "Agmon Diatonic DS5"],
+        "Tetradecatonic (14)": ["Young Half-Octave Diatonic"]
+    },
+
     // Chord qualities for each mode degree
     chords_charts: {
         "Major/Ionian": "MmmMMmd",
@@ -71,6 +208,21 @@ const TheoryEngine = {
             if (alteration === "♭" || alteration === "b") return noteGroup.slice(-2).replace("♮", "");
             return noteGroup.split("♮")[0] || noteGroup[0];
         }).map(n => this.normalizeNote(n)); // Final cleanup to remove natural signs
+    },
+
+    getScale24(root, modeKey) {
+        const modeIntervals = this.modes_24[modeKey];
+        if (!modeIntervals) return [];
+
+        let cumulative = 0;
+        const quarterToneSteps = [0, ...modeIntervals.map(step => cumulative += step)];
+
+        let indexOfRoot = this.base_notes_24.findIndex(n => n === root);
+        if (indexOfRoot === -1) indexOfRoot = 0;
+
+        return quarterToneSteps.map(shift => {
+            return this.base_notes_24[(indexOfRoot + shift) % 24];
+        });
     },
 
     /**

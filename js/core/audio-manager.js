@@ -135,7 +135,6 @@ const AudioManager = {
         } else if (Number.isFinite(note)) {
             frequency = note;
         }
-        console.log(frequency)
         this.playNote(frequency, type);
         setTimeout(() => this.stopNote(frequency), duration * 1000);
     },
@@ -172,6 +171,7 @@ const AudioManager = {
     },
 
     async playScale(root, mode, duration = 0.4) {
+        this.stopAll(); // Instantly silence previous playbacks
         let alt = "♮";
         if (root.includes('#')) { alt = "#"; root = root.replace('#', ''); }
         else if (root.includes('b')) { alt = "♭"; root = root.replace('b', ''); }
@@ -192,6 +192,24 @@ const AudioManager = {
             const freq = baseFreq * Math.pow(2, octaveOffset) * Math.pow(2, currentIdx / 12);
             this.playNoteWithDuration(freq, duration);
             lastIdx = currentIdx;
+            await new Promise(r => setTimeout(r, duration * 1000));
+        }
+    },
+
+    async playScale24(root, mode, duration = 0.4) {
+        this.stopAll(); // Instantly silence previous playbacks
+        let rootFreq = TheoryEngine.getSimpleFrequency(root, 24);
+        if (!rootFreq) rootFreq = 261.63; // C4
+
+        const modeIntervals = TheoryEngine.modes_24[mode];
+        if (!modeIntervals) return;
+
+        let cumulative = 0;
+        const steps = [0, ...modeIntervals.map(step => cumulative += step)];
+
+        for (let step of steps) {
+            const freq = rootFreq * Math.pow(2, step / 24);
+            this.playNoteWithDuration(freq, duration);
             await new Promise(r => setTimeout(r, duration * 1000));
         }
     }

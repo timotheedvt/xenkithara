@@ -371,27 +371,141 @@
         </div>
 
         <div id="scales" class="tab-content">
-            <div class="grid grid-2">
-                <div class="card">
-                    <h3>Traditional Microtonal Scales</h3>
-                    <ul class="scale-formula">
-                        <li><strong>Maqam Rast:</strong> 4 - 3 - 3 - 4 - 4 - 3 - 3 (steps in 24-edo).</li>
-                        <li><strong>Maqam Bayati:</strong> 3 - 3 - 4 - 4 - 2 - 1 - 3 - 4.</li>
-                        <li><strong>Maqam Saba:</strong> 3 - 3 - 2 - 6 - 2 - 4 - 4.</li>
-                    </ul>
+            <div class="card" style="margin-bottom: 20px;">
+                <h3>Interactive 24-EDO Scale Explorer</h3>
+                <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">Choose any root note and 24-EDO mode to explore.</p>
+                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+                    <select id="dynamic-root-24" style="min-width: 80px;"></select>
+                    <select id="dynamic-mode-24" style="min-width: 300px;"></select>
+                    <button id="play-dynamic-scale-24" class="tab-btn active" style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-play"></i> Play Scale
+                    </button>
                 </div>
-                <div class="card">
-                    <h3>New Pentatonics</h3>
-                    <ul class="interval-list-2">
-                        <li><strong>Godzilla:</strong> 0 - 5 - 10 - 14 - 19 - 24 (Equi-pentatonic approx.).</li>
-                        <li><strong>Mohajira:</strong> 0 - 4 - 7 - 11 - 14 - 18 - 21 - 24 (Arabic-style heptatonic).
-                        </li>
-                    </ul>
-                </div>
+                <div id="dynamic-scale-notes-24" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;"></div>
+                <custom-keyboard id="global-keyboard-24" height="120px" width="100%" is24edo="true" showNames="true"></custom-keyboard>
+            </div>
+
+            <div id="scales-lists-24" class="grid grid-24">
+                <!-- Dynamically populated with all categories -->
             </div>
         </div>
     </div>
     <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const rootSel = document.getElementById('dynamic-root-24');
+            const modeSel = document.getElementById('dynamic-mode-24');
+            const playBtn = document.getElementById('play-dynamic-scale-24');
+            const notesContainer = document.getElementById('dynamic-scale-notes-24');
+            const keyboard = document.getElementById('global-keyboard-24');
+            const listsContainer = document.getElementById('scales-lists-24');
+
+            if (rootSel && modeSel && playBtn && notesContainer) {
+                rootSel.innerHTML = TheoryEngine.base_notes_24.map(n => `<option value="${n}">${n}</option>`).join('');
+
+                let optionsHtml = '';
+                for (const [category, scales] of Object.entries(TheoryEngine.modes_24_categories)) {
+                    optionsHtml += `<optgroup label="${category}">`;
+                    scales.forEach(scale => {
+                        optionsHtml += `<option value="${scale}">${scale}</option>`;
+                    });
+                    optionsHtml += `</optgroup>`;
+                }
+                modeSel.innerHTML = optionsHtml;
+
+                const updateDynamicScale = () => {
+                    const r = rootSel.value;
+                    const m = modeSel.value;
+                    const notes = TheoryEngine.getScale24(r, m);
+                    if (notes.length > 0) notes.push(notes[0]);
+                    if (notes.length > 1 && notes[notes.length - 1] === notes[notes.length - 2])
+                        notes.pop();
+
+                    notesContainer.innerHTML = notes.map(n => {
+                        n = n
+                            .replace("d", "<sup>d</sup>")
+                            .replace("‡", "<sup>‡</sup>")
+                            .replace("b", "<sup>b</sup>")
+                            .replace("#", "<sup>#</sup>")
+                        return `<span style="background: var(--bg-dark); padding: 10px 15px; border-radius: 8px; font-weight: bold; color: var(--accent-blue); border: 1px solid var(--glass); box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                                ${n}
+                            </span>`
+                    }).join('');
+
+                    keyboard.setAttribute('keys', notes.join(' - '));
+                };
+
+                let highlightId = 0;
+                rootSel.addEventListener('change', updateDynamicScale);
+                modeSel.addEventListener('change', updateDynamicScale);
+                playBtn.addEventListener('click', async () => {
+                    if (!window.AudioManager) return;
+                    const duration = 0.25;
+                    AudioManager.playScale24(rootSel.value, modeSel.value, duration);
+
+                    const currentHighlightId = ++highlightId;
+                    const spans = notesContainer.querySelectorAll('span');
+
+                    // Reset styling before starting new highlight
+                    spans.forEach(s => {
+                        s.style.backgroundColor = 'var(--bg-dark)';
+                        s.style.color = 'var(--accent-blue)';
+                        s.style.transform = 'scale(1)';
+                    });
+
+                    for (let i = 0; i < spans.length; i++) {
+                        if (currentHighlightId !== highlightId) break;
+
+                        if (spans[i]) {
+                            spans[i].style.transition = 'all 0.1s ease';
+                            spans[i].style.backgroundColor = 'var(--accent-blue)';
+                            spans[i].style.color = 'var(--bg-dark)';
+                            spans[i].style.transform = 'scale(1.1)';
+                        }
+                        await new Promise(r => setTimeout(r, duration * 1000));
+                        if (currentHighlightId !== highlightId) break;
+                        if (spans[i]) {
+                            spans[i].style.backgroundColor = 'var(--bg-dark)';
+                            spans[i].style.color = 'var(--accent-blue)';
+                            spans[i].style.transform = 'scale(1)';
+                        }
+                    }
+                });
+
+                updateDynamicScale();
+
+                const alph = "abcdefghijklmnopqrstuvwxyz"
+                let i = 0;
+                for (const [category, scales] of Object.entries(TheoryEngine.modes_24_categories)) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    const isHeptatonic = category === 'Heptatonic (7)';
+                    let listHtml = `<ul class="interval-list-2" ${isHeptatonic ? 'style="column-count: 2; column-gap: 20px;"' : ''}>`;
+                    scales.forEach(scale => {
+                        const intervals = TheoryEngine.modes_24[scale].join(' - ');
+                        listHtml += `<li class="playable-scale" data-scale="${scale}" title="Play ${scale}" ${isHeptatonic ? 'style="break-inside: avoid; margin-bottom: 8px;"' : ''}><strong>${scale}:</strong> ${intervals}</li>`;
+                    });
+                    listHtml += `</ul>`;
+                    card.style.gridArea = alph[i];
+                    i++;
+
+                    card.innerHTML = `<h3>${category} Scales</h3>${listHtml}`;
+                    listsContainer.appendChild(card);
+                }
+
+                // Add click events to all the generated scales
+                document.querySelectorAll('.playable-scale').forEach(li => {
+                    li.addEventListener('click', () => {
+                        modeSel.value = li.getAttribute('data-scale');
+                        updateDynamicScale();
+
+                        document.getElementById('scales').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        playBtn.click(); // Trigger the play and visual highlight in the explorer
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

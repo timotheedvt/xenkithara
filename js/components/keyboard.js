@@ -51,7 +51,7 @@ class CustomKeyboard extends HTMLElement {
     const width = this.getAttribute('width') || '100%';
     const is24edo = this.getAttribute('is24edo') === 'true';
     const showNames = this.getAttribute('showNames') || false;
-    let keysAttr = this.getAttribute('keys')
+    let keysAttr = (this.getAttribute('keys') || '')
       .replace(" - ", " ")
       .replace("Db", "C#")
       .replace("Eb", "D#")

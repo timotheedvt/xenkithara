@@ -13,6 +13,16 @@
 }
 
 /* Grid layouts */
+.grid-24 {
+    grid-template-areas:
+        "a h c c"
+        "b i c c"
+        "d e c c"
+        "d f c c"
+        "d g c c"
+        "o o c c";
+}
+
 .grid-3 {
     grid-template-areas:
         "a b c";
@@ -88,6 +98,15 @@
 .interval-name {
     font-size: 0.9em;
     color: var(--text-white);
+}
+
+.playable-scale {
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.playable-scale:hover {
+    cursor: pointer;
+    color: var(--accent-blue);
+    transform: translateX(4px);
 }
 
 /* Tab navigation responsive */
