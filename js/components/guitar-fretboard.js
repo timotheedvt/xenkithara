@@ -28,7 +28,8 @@ class GuitarFretboard extends HTMLElement {
 
         this.shadowRoot.innerHTML = `
             <style>
-                :host { display: block; }
+                :host { display: block; width: 100%; }
+                canvas { width: 100%; height: auto; display: block; }
             </style>
             <canvas id="fretboard" width="${width}" height="${height}"></canvas>
         `;
@@ -40,16 +41,20 @@ class GuitarFretboard extends HTMLElement {
 
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
             const isHover = this.hitboxes.some(hit => Math.sqrt((mouseX - hit.x)**2 + (mouseY - hit.y)**2) <= hit.radius);
             canvas.style.cursor = isHover ? 'pointer' : 'default';
         });
 
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseX = (e.clientX - rect.left) * scaleX;
+            const mouseY = (e.clientY - rect.top) * scaleY;
             this.hitboxes.forEach(hit => {
                 const dist = Math.sqrt((mouseX - hit.x)**2 + (mouseY - hit.y)**2);
                 if (dist <= hit.radius && window.AudioManager) {
