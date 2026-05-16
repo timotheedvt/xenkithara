@@ -114,11 +114,29 @@ class CustomKeyboard extends HTMLElement {
           const bottom = r * H + (c % 2) * (H / 2);
 
           const noteToDisplay = showNames ? noteName.replace('^', '↑').replace('v', '↓') : '';
-          const noteIndex = notesList.indexOf(noteName);
-          const hue = (noteIndex * 360) / totalNotes;
+
+          // Determine colors based on key type to create visual anchors
+          let bgColor, textCol, textShadow;
+          if (noteName === 'C') {
+            bgColor = 'var(--accent-blue)';
+            textCol = 'var(--text-dark)';
+            textShadow = 'none';
+          } else if (keyType === 'white') {
+            bgColor = 'var(--dark-blue)';
+            textCol = 'var(--text-dark)';
+            textShadow = 'none';
+          } else if (keyType === 'black') {
+            bgColor = 'var(--accent-red)';
+            textCol = 'var(--text-dark)';
+            textShadow = 'none';
+          } else { // grey microtones
+            bgColor = 'var(--accent-green)';
+            textCol = 'var(--text-white)';
+            textShadow = '1px 1px 2px rgba(0,0,0,0.8)';
+          }
 
           hexesHtml += `<div class="hex-outer" style="left: ${left}%; bottom: ${bottom}%; width: ${W}%; height: ${H}%;">
-              <div class="hex-inner ${keyType} ${highlightClass}" data-note="${noteName}" style="--hex-bg: hsl(${hue}, 40%, 65%); --hex-bg-dark: hsl(${hue}, 40%, 45%);">
+              <div class="hex-inner ${keyType} ${highlightClass}" data-note="${noteName}" style="--hex-bg: ${bgColor}; --hex-text: ${textCol}; --hex-shadow: ${textShadow};">
                   <span>${noteToDisplay}</span>
               </div>
           </div>`;
@@ -157,16 +175,18 @@ class CustomKeyboard extends HTMLElement {
             font-size: max(8px, 9cqh);
             cursor: pointer;
             transition: filter 0.2s, background 0.2s, color 0.2s;
-            background: linear-gradient(to bottom, var(--hex-bg), var(--hex-bg-dark));
-            color: #fff;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            background-color: var(--hex-bg);
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0.4) 100%);
+            color: var(--hex-text);
+            text-shadow: var(--hex-shadow);
           }
           .hex-inner span {
             pointer-events: none;
           }
 
           .hex-inner.highlight {
-            background: var(--accent-blue);
+            background-color: #ffffff;
+            background-image: linear-gradient(to bottom, #ffffff 0%, #bbbbbb 100%);
             color: var(--text-dark);
             text-shadow: none;
           }
