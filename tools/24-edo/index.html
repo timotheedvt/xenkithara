@@ -17,18 +17,6 @@
     <link rel="icon" type="image/png" href="../../assets/icon.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="../../js/components/main-nav.js"></script>
-    <script>
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
-
-            const url = new URL(window.location);
-            url.searchParams.set('page', tabId);
-            window.history.pushState({}, '', url);
-        }
-    </script>
 </head>
 
 <body>
@@ -39,6 +27,7 @@
             <button class="tab-btn active" id="fundamentals-btn" onclick="showTab('fundamentals')">Fundamentals</button>
             <button class="tab-btn" id="chords-btn" onclick="showTab('chords')">New Chords</button>
             <button class="tab-btn" id="scales-btn" onclick="showTab('scales')">Micro-Scales</button>
+            <button class="tab-btn" id="keyboard-btn" onclick="showTab('keyboard')">Keyboard Layout</button>
         </div>
 
         <div id="fundamentals" class="tab-content active">
@@ -380,6 +369,12 @@
             <div id="scales-lists-24" class="grid grid-24">
                 <!-- Dynamically populated with all categories -->
             </div>
+        </div>
+
+        <div id="keyboard" class="tab-content">
+            <custom-keyboard height="250px" width="80%" is24edo="true" showNames="true"></custom-keyboard>
+            <h2>Wicki-Hayden Keyboard</h2>
+            <custom-keyboard height="500px" width="100%" is24edo="true" showNames="true" layout="isomorphic"></custom-keyboard>
         </div>
     </div>
     <script src="script.js"></script>
