@@ -214,3 +214,24 @@ select {
   padding-right: 10%;
   padding-left: 10%;
 }
+
+@media (max-width: 900px) {
+  body::after {
+      content: "⚠️ This page is not optimized for small screens.";
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent-red);
+      color: var(--text-dark);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 100;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      text-align: center;
+      width: 80%;
+      max-width: 300px;
+      pointer-events: none;
+  }
+}
