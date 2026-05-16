@@ -368,13 +368,22 @@ h1{
 
 /* responsive tweaks */
 @media (max-width: 900px) {
-  .grid-3, .grid-4, .grid-6, .grid-7 {
+  .grid-3, .grid-4, .grid-7 {
     grid-template-columns: 1fr;
     grid-template-areas:
       "a"
       "b"
       "c"
       "d";
+  }
+  .grid-6 {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "a"
+      "b"
+      "c"
+      "d"
+      "e";
   }
   .interval-grid-container {
     grid-template-columns: 1fr;
@@ -387,7 +396,27 @@ h1{
   .note-circle{ width:36px; height:36px; }
   .shells { grid-template-columns: 1fr; }
   .blues { grid-template-columns: repeat(2, 1fr); }
-}
+
+  .grid-6, .grid-7 {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "a"
+      "b"
+      "c"
+      "d"
+      "e";
+  }
+
+  .chords-li-example {
+    flex-direction: column !important;
+    text-align: center;
+  }
+
+  .chords-li-example custom-keyboard {
+    width: 100% !important;
+    max-width: 300px;
+  }
+} /* Close the @media (max-width: 600px) block properly */
 
 line {
 	stroke: rgba(255, 255, 255, 0.03);
@@ -395,7 +424,9 @@ line {
 }
 
 .chords-li-example {
-  display: grid;
-  gap: 8px;
-  justify-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
