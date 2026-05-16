@@ -92,6 +92,7 @@ class CustomKeyboard extends HTMLElement {
           user-select: none;
           box-sizing: border-box;
           display: flex;
+          container-type: size;
         }
         .white-key {
           flex: 1;
@@ -110,7 +111,7 @@ class CustomKeyboard extends HTMLElement {
           font-family: monospace, sans-serif;
           font-weight: bold;
           color: #333;
-          font-size: 16px;
+          font-size: max(12px, 16cqh);
           box-sizing: border-box;
           transition: background-color 0.3s, color 0.3s;
         }
@@ -121,8 +122,8 @@ class CustomKeyboard extends HTMLElement {
           border-radius: 0 6px 6px 0;
         }
         .white-key span {
-          font-size: 0.75em;
-          margin-bottom: -4px;
+          font-size: 1em;
+          margin-bottom: 4cqh;
         }
         .black-key {
           position: absolute;
@@ -138,12 +139,13 @@ class CustomKeyboard extends HTMLElement {
           z-index: var(--level-1);
           top: 0;
           transition: background-color 0.3s;
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
         }
         .black-key span {
-          font-size: 0.75em;
-          display: flex;
-          justify-content: center;
-          padding-top: 25%;
+          font-size: max(10px, 14cqh);
+          margin-bottom: 4cqh;
         }
         .grey-key {
           position: absolute;
@@ -158,13 +160,21 @@ class CustomKeyboard extends HTMLElement {
           z-index: var(--level-1);
           top: 0;
           transition: background-color 0.3s;
+          display: flex;
+          flex-direction: column;
         }
         .grey-key span {
           color: var(--text-white);
-          font-size: 0.25em;
-          display: flex;
-          justify-content: center;
-          padding-top: 25px;
+          font-size: max(9px, 12cqh);
+          align-self: center;
+          margin-top: auto;
+          margin-bottom: 4cqh;
+        }
+        .grey-key[data-note="E‡"] span,
+        .grey-key[data-note="B‡"] span,
+        .grey-key[data-note="Cd"] span {
+          margin-top: auto;
+          margin-bottom: auto;
         }
         .grey-key[data-note="Cd"] {
           border-radius: 6px 0 6px 0;
