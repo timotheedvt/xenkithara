@@ -100,6 +100,10 @@
     color: var(--text-white);
 }
 
+#keyboard:not(.active) {
+    display: none !important;
+}
+
 .playable-scale {
     transition: color 0.2s ease, transform 0.2s ease;
 }
