@@ -145,10 +145,15 @@ class CustomKeyboard extends HTMLElement {
 
       const isoStyle = `
         <style>
-          .keyboard {
-            position: relative;
+          :host {
+            display: block;
             width: ${width};
             height: ${height};
+          }
+          .keyboard {
+            position: relative;
+            width: 100%;
+            height: 100%;
             background: transparent;
             border-radius: 6px;
             user-select: none;
@@ -220,10 +225,15 @@ class CustomKeyboard extends HTMLElement {
 
     const style = `
       <style>
-        .keyboard {
-          position: relative;
+        :host {
+          display: block;
           width: ${width};
           height: ${height};
+        }
+        .keyboard {
+          position: relative;
+          width: 100%;
+          height: 100%;
           background: #fff;
           border: 1px solid #999;
           border-radius: 6px;
