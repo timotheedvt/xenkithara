@@ -88,16 +88,20 @@ class CustomKeyboard extends HTMLElement {
       const upRightStep = 7;
       const totalNotes = 24;
 
-      const numRows = 11;
+      // for the 61-key Intuitive Instrument's Exquis
+      const numRows = 6;
       const numCols = 11;
       const baseNoteIndex = 0; // C
 
-      const W = 100 / (numCols + 0.5);
-      const H = 100 / (numRows * 0.75 + 0.25);
+      const W = 100 / (numCols * 0.75 + 0.25);
+      const H = 100 / (numRows + 0.5);
 
       let hexesHtml = '';
       for (let r = 0; r < numRows; r++) {
         for (let c = 0; c < numCols; c++) {
+          // Hide the first row on alternating columns to create a 6-5-6-5-6... pattern
+          if (r === numRows-1 && c % 2 === 1) continue;
+
           let noteIdx = (baseNoteIndex + c * rightStep + r * upRightStep) % totalNotes;
           if (noteIdx < 0) noteIdx += totalNotes;
           const noteName = notesList[noteIdx];
@@ -106,8 +110,8 @@ class CustomKeyboard extends HTMLElement {
           const keyInfo = this.defaultKeys.find(k => k.note === noteName);
           const keyType = keyInfo ? keyInfo.type : 'white';
 
-          const left = c * W + (r % 2) * (W / 2);
-          const bottom = r * 75 * (H / 100);
+          const left = c * 0.75 * W;
+          const bottom = r * H + (c % 2) * (H / 2);
 
           const noteToDisplay = showNames ? noteName.replace('^', '↑').replace('v', '↓') : '';
           const noteIndex = notesList.indexOf(noteName);
@@ -136,7 +140,7 @@ class CustomKeyboard extends HTMLElement {
           }
           .hex-outer {
             position: absolute;
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
             background: #222;
           }
           .hex-inner {
@@ -144,7 +148,7 @@ class CustomKeyboard extends HTMLElement {
             top: 2%; left: 2%;
             width: 96%;
             height: 96%;
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
             display: flex;
             justify-content: center;
             align-items: center;
