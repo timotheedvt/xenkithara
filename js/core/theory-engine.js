@@ -73,6 +73,37 @@ const TheoryEngine = {
         }).map(n => this.normalizeNote(n)); // Final cleanup to remove natural signs
     },
 
+    /**
+     * Converts a Roman numeral into a concrete chord in the given key.
+     * e.g., getChordFromNumeral("IV - Maj7", "C") -> "Fmaj7"
+     */
+    getChordFromNumeral(numeralStr, keyRoot = "C") {
+        let alt = "♮";
+        let cleanRoot = keyRoot;
+        if (cleanRoot.includes('#')) { alt = "#"; cleanRoot = cleanRoot.replace('#', ''); }
+        else if (cleanRoot.includes('b') || cleanRoot.includes('♭')) { alt = "♭"; cleanRoot = cleanRoot.replace(/[b♭]/, ''); }
+
+        const scale = this.getScale(cleanRoot, "Major/Ionian", alt);
+        const match = numeralStr.match(/^(III|VII|IV|VI|II|I|V|iii|vii|iv|vi|ii|i|v)/i);
+        if (!match || !scale || scale.length === 0) return null;
+
+        const roman = match[1];
+        const isMinor = roman === roman.toLowerCase();
+        const degrees = { "i": 0, "ii": 1, "iii": 2, "iv": 3, "v": 4, "vi": 5, "vii": 6 };
+        const degreeIndex = degrees[roman.toLowerCase()];
+        let rootNote = scale[degreeIndex];
+
+        if (numeralStr.includes("Maj7") || numeralStr.includes("maj7")) return rootNote + "maj7";
+        if (numeralStr.includes("m7b5")) return rootNote + "m7b5";
+        if (numeralStr.includes("m7")) return rootNote + "m7";
+        if (numeralStr.includes("7")) return rootNote + (isMinor ? "m7" : "7");
+        if (numeralStr.includes("dim") || numeralStr.includes("°")) return rootNote + "dim";
+
+        if (roman.toLowerCase() === "vii") return rootNote + "dim";
+        if (isMinor) return rootNote + "m";
+        return rootNote;
+    },
+
     getRomanNumeral(degree, chordType) {
         const numerals = ["I", "II", "III", "IV", "V", "VI", "VII"];
         let rom = numerals[(degree - 1) % 7];
@@ -116,13 +147,16 @@ const TheoryEngine = {
         return clean;
     },
 
-    getSimpleFrequency(note) {
+    getSimpleFrequency(note, division = 12) {
         note = note.replace("<sup>", "").replace("</sup>", "");
         const base = 440; // A4
         let noteIndex;
-        noteIndex = this.base_notes_12.findIndex(n => n.includes(note));
+        const is24edo = division == 24;
+        noteIndex = !is24edo
+            ? this.base_notes_12.findIndex(n => n.includes(note))
+            : this.base_notes_24.findIndex(n => n.includes(note));
         if (noteIndex === -1) return null;
-        return base * Math.pow(2, (noteIndex) / 12);
+        return base * Math.pow(2, (noteIndex) / (is24edo ? 24 : 12));
     }
 };
 

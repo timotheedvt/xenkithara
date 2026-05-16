@@ -104,7 +104,6 @@ class CustomKeyboard extends HTMLElement {
             0 2px 5px rgba(0,0,0,0.15);
           position: relative;
           z-index: var(--level-0);
-          cursor: pointer;
           display: flex;
           justify-content: center;
           align-items: flex-end;
@@ -137,7 +136,6 @@ class CustomKeyboard extends HTMLElement {
             inset 0 1px 2px rgba(255,255,255,0.2),
             0 2px 5px rgba(0,0,0,0.6);
           z-index: var(--level-1);
-          cursor: pointer;
           top: 0;
           transition: background-color 0.3s;
         }
@@ -158,7 +156,6 @@ class CustomKeyboard extends HTMLElement {
             inset 0 1px 2px rgba(255,255,255,0.2),
             0 2px 5px rgba(0,0,0,0.6);
           z-index: var(--level-1);
-          cursor: pointer;
           top: 0;
           transition: background-color 0.3s;
         }
@@ -265,6 +262,19 @@ class CustomKeyboard extends HTMLElement {
         ${blackKeysHtml}
       </div>
     `;
+
+    const keyboardNode = this.shadowRoot.querySelector('.keyboard');
+    if (keysToHighlight.length > 0) {
+      keyboardNode.style.cursor = 'pointer';
+      keyboardNode.title = 'Play highlighted notes';
+    }
+    keyboardNode.addEventListener('click', () => {
+      if (window.AudioManager && keysToHighlight.length > 0) {
+        keysToHighlight.forEach(note => {
+          AudioManager.playNoteWithDuration(note, 0.25);
+        });
+      }
+    });
   }
 }
 

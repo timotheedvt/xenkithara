@@ -20,3 +20,21 @@ if (window.location) {
         showTab('fundamentals');
     }
 }
+
+const scaleLi = document.querySelectorAll('.scale-li');
+scaleLi.forEach(li => {
+	li.addEventListener('click', async () => {
+		const text = li.innerHTML.trim();
+		const scaleAttr = li.getAttribute('data-scale');
+
+		if (scaleAttr === "chromatic") {
+			const baseFreq = 261.63; // C4
+			for (let i = 0; i < 24; i++) {
+				const freq = baseFreq * Math.pow(2, i / 24);
+				AudioManager.playNoteWithDuration(freq, 0.2);
+				await new Promise(resolve => setTimeout(resolve, 250));
+			}
+		} else {
+		}
+	});
+});

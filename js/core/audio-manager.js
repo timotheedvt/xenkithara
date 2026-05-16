@@ -130,12 +130,45 @@ const AudioManager = {
         if (typeof note === 'string') note = note.replace("<sup>", "").replace("</sup>", "");
         let frequency;
         if (typeof note === 'string') {
-            frequency = TheoryEngine.getSimpleFrequency(note);
+            const is24edo = note.includes("‡") || note.includes("d");
+            frequency = TheoryEngine.getSimpleFrequency(note, is24edo ? 24 : 12);
         } else if (Number.isFinite(note)) {
             frequency = note;
         }
+        console.log(frequency)
         this.playNote(frequency, type);
         setTimeout(() => this.stopNote(frequency), duration * 1000);
+    },
+
+    playChord(chordName, duration = 0.5) {
+        let rootMatch = chordName.match(/^[A-G][#b♭‡d]?/);
+        if (!rootMatch) return;
+
+        let root = rootMatch[0].replace('♭', 'b');
+        let rootFreq = TheoryEngine.getSimpleFrequency(root);
+        if (!rootFreq) return;
+
+        let isMinor = chordName.includes('m') && !chordName.includes('maj') && !chordName.includes('M');
+        let isDim = chordName.includes('dim') || chordName.includes('°') || chordName.includes('m7b5');
+        let isAug = chordName.includes('aug') || chordName.includes('+');
+
+        let st3 = (isMinor || isDim) ? 3 : 4;
+        let st5 = isDim ? 6 : (isAug ? 8 : 7);
+
+        let freqs = [
+            rootFreq,
+            rootFreq * Math.pow(2, st3/12),
+            rootFreq * Math.pow(2, st5/12)
+        ];
+
+        if (chordName.match(/maj7|Maj7|M7/)) {
+            freqs.push(rootFreq * Math.pow(2, 11/12));
+        } else if (chordName.includes('7')) {
+            let st7 = (chordName.includes('dim7') && !chordName.includes('m7b5')) ? 9 : 10;
+            freqs.push(rootFreq * Math.pow(2, st7/12));
+        }
+
+        this.playNotes(freqs, duration);
     },
 
     async playScale(root, mode, duration = 0.4) {

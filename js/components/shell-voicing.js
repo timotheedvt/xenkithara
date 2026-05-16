@@ -120,6 +120,21 @@ class ShellVoicing extends HTMLElement {
                 </div>
             </div>
         `;
+
+        // Make the fretboard component itself playable
+        const fb = this.shadowRoot.querySelector('.fretboard');
+        fb.style.cursor = 'pointer';
+        fb.title = "Play Voicing";
+        fb.addEventListener('click', () => {
+            if (!window.AudioManager) return;
+            const baseFreq = 130.81; // Using a generic C3 base for a movable shape
+            const freqs = activeMarkers.map(m => {
+                const intervals = { "R": 0, "b3": 3, "3": 4, "b7": 10, "7": 11, "6": 9 };
+                const st = intervals[m.label] !== undefined ? intervals[m.label] : 0;
+                return baseFreq * Math.pow(2, st / 12) * 2; // jump to the octave above
+            });
+            AudioManager.playNotes(freqs, 0.25);
+        });
     }
 }
 customElements.define('shell-voicing', ShellVoicing);

@@ -8,6 +8,7 @@ class GuitarFretboard extends HTMLElement {
         this.attachShadow({ mode: 'open' });
         this.notesArr = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
         this.fretToDraw = [0, 5, 7, 10, 12];
+        this.hitboxes = [];
     }
 
     attributeChangedCallback() {
@@ -34,7 +35,28 @@ class GuitarFretboard extends HTMLElement {
 
         const canvas = this.shadowRoot.getElementById('fretboard');
         const ctx = canvas.getContext('2d');
+        this.hitboxes = []; // Reset hitboxes before rendering
         this.drawFretboard(ctx, width, height, stringsCount, tuning, activeNotes);
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const isHover = this.hitboxes.some(hit => Math.sqrt((mouseX - hit.x)**2 + (mouseY - hit.y)**2) <= hit.radius);
+            canvas.style.cursor = isHover ? 'pointer' : 'default';
+        });
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            this.hitboxes.forEach(hit => {
+                const dist = Math.sqrt((mouseX - hit.x)**2 + (mouseY - hit.y)**2);
+                if (dist <= hit.radius && window.AudioManager) {
+                    AudioManager.playNoteWithDuration(hit.note, 0.5);
+                }
+            });
+        });
     }
 
     drawFretboard(ctx, w, h, stringsCount, tuning, activeNotes) {
@@ -97,6 +119,8 @@ class GuitarFretboard extends HTMLElement {
                 const drawNote = (f, xOffset = 0) => {
                     let x = offsetX + (f * spaceBetweenFrets) - (f === 0 ? 0 : spaceBetweenFrets / 2) + xOffset;
                     let y = offsetY + (sIdx * spaceBetweenStrings);
+
+                    this.hitboxes.push({ x, y, radius, note });
 
                     ctx.beginPath();
                     ctx.fillStyle = "#6F8FF0"; // --accent-blue

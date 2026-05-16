@@ -34,6 +34,7 @@ function initCheckboxes() {
             const note = e.target.value;
             if (e.target.checked) {
                 if (!checkedNotes.includes(note)) checkedNotes.push(note);
+                if (window.AudioManager) AudioManager.playNoteWithDuration(note, 0.2);
             } else {
                 checkedNotes = checkedNotes.filter(n => n !== note);
             }
@@ -99,8 +100,24 @@ function updateChordTable(scale, modeKey) {
         note = TheoryEngine.normalizeNote(note); // Ensure we have a standardized note name
         let chordName = note + (quality === 'M' ? '' : quality === 'd' ? '°' : quality);
 
-        headRow.insertCell().innerText = roman;
-        dataRow.insertCell().innerText = chordName;
+        let hCell = headRow.insertCell();
+        hCell.innerText = roman;
+        
+        let dCell = dataRow.insertCell();
+        dCell.innerText = chordName;
+        dCell.style.cursor = "pointer";
+        dCell.title = "Play " + chordName + " chord";
+        
+        dCell.addEventListener('click', () => {
+            if (!window.AudioManager) return;
+            const rootFreq = TheoryEngine.getSimpleFrequency(note);
+            if (!rootFreq) return;
+            
+            const st3 = (quality === 'm' || quality === 'd') ? 3 : 4;
+            const st5 = (quality === 'd') ? 6 : 7;
+            
+            AudioManager.playNotes([rootFreq, rootFreq * Math.pow(2, st3/12), rootFreq * Math.pow(2, st5/12)], 0.25);
+        });
     });
 }
 
