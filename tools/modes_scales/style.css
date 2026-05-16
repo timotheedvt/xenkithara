@@ -109,11 +109,12 @@ form {
     justify-content: center;
 }
 
-@media (max-width: 900px) {
-    body::after {
-        content: "⚠️ This page is not optimized for small screens.";
+@media (max-width: 900px), (max-device-width: 900px) {
+    html::before {
+        content: "⚠️ Warning: This page is not optimized for small screens.";
+        display: block;
         position: fixed;
-        top: 70px;
+        top: 50px;
         left: 50%;
         transform: translateX(-50%);
         background: var(--accent-red);
@@ -121,11 +122,12 @@ form {
         padding: 10px 20px;
         border-radius: 8px;
         font-weight: bold;
-        z-index: 100;
+        z-index: 9999;
         box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         text-align: center;
         width: 80%;
         max-width: 300px;
         pointer-events: none;
+        zoom: 250%;
     }
 }
