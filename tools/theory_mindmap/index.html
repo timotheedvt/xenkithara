@@ -189,55 +189,61 @@
 
         <!-- SCALES TAB -->
         <div id="scales" class="tab-content">
+            <!-- Interactive Explorer (New) -->
+
             <div class="grid grid-6">
+                <div class="card" style="grid-area: e;">
+                    <h3>Interactive Scale Explorer</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">Choose any root note and mode to explore the 12-EDO scales dynamically.</p>
+                    <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;">
+                        <select id="dynamic-root" style="min-width: 80px;"></select>
+                        <select id="dynamic-mode" style="min-width: 180px;"></select>
+                        <button id="play-dynamic-scale" class="tab-btn active" style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fa fa-play"></i> Play Scale
+                        </button>
+                    </div>
+                    <div id="dynamic-scale-notes" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+                </div>
+
                 <div class="card" style="grid-area: a;">
-                    <h3>Major Scale</h3>
-                    <p><strong>Formula:</strong> W-W-H-W-W-W-H</p>
-                    <p style="font-size: 0.9em; opacity: 0.8;">(W = Whole step/2 frets, H = Half step/1 fret)</p>
-                    <h4>Example: C Major</h4>
-                    <ul class="scale-formula">
-                        <li>C - D - E - F - G - A - B - C</li>
-                        <li>Intervals: 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8</li>
+                    <h3>Major Scale (Ionian)</h3>
+                    <p style="margin-bottom: 10px;"><strong>Formula:</strong> W-W-H-W-W-W-H</p>
+                    <p style="font-size: 0.9em; opacity: 0.8; margin-bottom: 15px;">The bright, happy foundation of Western music.</p>
+                    <ul class="scale-formula" style="list-style:none; padding:0; display:flex; flex-direction:column; gap:10px;">
+                        <li class="scale-card-btn" data-root="C" data-mode="Major/Ionian">C Major</li>
                     </ul>
                 </div>
 
                 <div class="card" style="grid-area: b;">
-                    <h3>Natural Minor Scale</h3>
-                    <p><strong>Formula:</strong> W-H-W-W-H-W-W</p>
-                    <h4>Example: A Minor</h4>
-                    <ul class="scale-formula">
-                        <li>A - B - C - D - E - F - G - A</li>
-                        <li>Intervals: 1 - 2 - <sup>b</sup>3 - 4 - 5 - <sup>b</sup>6 - <sup>b</sup>7 - 8</li>
+                    <h3>Natural Minor (Aeolian)</h3>
+                    <p style="margin-bottom: 10px;"><strong>Formula:</strong> W-H-W-W-H-W-W</p>
+                    <p style="font-size: 0.9em; opacity: 0.8; margin-bottom: 15px;">Relative to Major, creates a darker, melancholic feel.</p>
+                    <ul class="scale-formula" style="list-style:none; padding:0; display:flex; flex-direction:column; gap:10px;">
+                        <li class="scale-card-btn" data-root="A" data-mode="Natural Minor/Aeolian">A Minor</li>
                     </ul>
-                    <p style="margin-top: 10px; font-size: 0.9em;">Relative to C Major (same notes!)</p>
                 </div>
 
                 <div class="card" style="grid-area: c;">
-                    <h3>Pentatonic Scales</h3>
-                    <h4>Major Pentatonic</h4>
-                    <p><strong>Formula:</strong> 1 - 2 - 3 - 5 - 6</p>
-                    <p>Example in C: C - D - E - G - A</p>
-
-                    <h4>Minor Pentatonic</h4>
-                    <p><strong>Formula:</strong> 1 - <sup>b</sup>3 - 4 - 5 - <sup>b</sup>7</p>
-                    <p>Example in A: A - C - D - E - G</p>
-
-                    <h4>Blues Scale</h4>
-                    <p><strong>Formula:</strong> 1 - <sup>b</sup>3 - 4 - <sup>b</sup>5 - 5 - <sup>b</sup>7</p>
-                    <p>Example in A: A - C - D - E<sup>b</sup> - E - G</p>
+                    <h3>Pentatonic & Blues</h3>
+                    <p><strong>Major Penta:</strong> 1 - 2 - 3 - 5 - 6</p>
+                    <p><strong>Minor Penta:</strong> 1 - <sup>b</sup>3 - 4 - 5 - <sup>b</sup>7</p>
+                    <p style="font-size: 0.9em; opacity: 0.8; margin-bottom: 15px;">5-note scales heavily used in Rock, Pop & Blues.</p>
+                    <ul class="scale-formula" style="list-style:none; padding:0; display:flex; flex-direction:column; gap:10px;">
+                        <li class="scale-card-btn" data-root="C" data-mode="Pentatonic Major">C Major Pentatonic</li>
+                    </ul>
                 </div>
 
                 <div class="card" style="grid-area: d;">
                     <h3>The 7 Modes</h3>
-                    <p>Built from each degree of the major scale:</p>
-                    <ul class="interval-list interval-grid-container-2">
-                        <li><strong>Ionian (I)</strong> - Major scale (bright)</li>
-                        <li><strong>Dorian (ii)</strong> - Minor with raised 6th (jazzy)</li>
-                        <li><strong>Phrygian (iii)</strong> - Minor with b2 (Spanish)</li>
-                        <li><strong>Lydian (IV)</strong> - Major with #4 (dreamy)</li>
-                        <li><strong>Mixolydian (V)</strong> - Major with b7 (bluesy)</li>
-                        <li><strong>Aeolian (vi)</strong> - Natural minor (dark)</li>
-                        <li><strong>Locrian (vii)</strong> - Diminished (unstable)</li>
+                    <p style="font-size: 0.9em; opacity: 0.8; margin-bottom: 15px;">Built from each degree of the major scale (Click to play in C):</p>
+                    <ul class="scale-formula" style="list-style:none; padding:0; display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">
+                        <li class="scale-card-btn" data-root="C" data-mode="Major/Ionian" data-title="Ionian (I)" data-desc="Major scale (bright)"></li>
+                        <li class="scale-card-btn" data-root="C" data-mode="Dorian" data-title="Dorian (ii)" data-desc="Minor with raised 6th (jazzy)"></li>
+                        <li class="scale-card-btn" data-root="C" data-mode="Phrygian" data-title="Phrygian (iii)" data-desc="Minor with b2 (Spanish)"></li>
+                        <li class="scale-card-btn" data-root="C" data-mode="Lydian" data-title="Lydian (IV)" data-desc="Major with #4 (dreamy)"></li>
+                        <li class="scale-card-btn" data-root="C" data-mode="Mixolydian" data-title="Mixolydian (V)" data-desc="Major with b7 (bluesy)"></li>
+                        <li class="scale-card-btn" data-root="C" data-mode="Natural Minor/Aeolian" data-title="Aeolian (vi)" data-desc="Natural minor (dark)"></li>
+                        <li class="scale-card-btn" data-root="C" data-mode="Locrian" data-title="Locrian (vii)" data-desc="Diminished (unstable)"></li>
                     </ul>
                 </div>
             </div>
