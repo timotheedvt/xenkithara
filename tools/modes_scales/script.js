@@ -59,7 +59,7 @@ function writeTune() {
     const alt = document.getElementById('alt-select').value;
     const modeKey = document.getElementById('mode-select').value;
 
-    const rawScale = TheoryEngine.getScale(root, modeKey, alt);
+    const rawScale = TheoryEngine.getScale12(root, modeKey, alt);
     const boxes = document.querySelectorAll('.note-check');
     boxes.forEach(b => b.checked = false);
 

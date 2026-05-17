@@ -176,7 +176,7 @@ const AudioManager = {
         if (root.includes('#')) { alt = "#"; root = root.replace('#', ''); }
         else if (root.includes('b')) { alt = "♭"; root = root.replace('b', ''); }
 
-        const notes = TheoryEngine.getScale(root, mode, alt);
+        const notes = TheoryEngine.getScale12(root, mode, alt);
         notes.push(notes[0]); // Add octave
 
         const baseFreq = 261.63; // C4

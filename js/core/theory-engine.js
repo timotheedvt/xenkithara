@@ -41,7 +41,7 @@ const TheoryEngine = {
      * @param {string} modeKey - e.g., "M", "m", "D"
      * @param {string} alteration - "#", "♭", or "♮"
      */
-    getScale(root, modeKey, alteration = "♮") {
+    getScale12(root, modeKey, alteration = "♮") {
         const modeIntervals = this.modes[modeKey];
         if (!modeIntervals) return [];
 
@@ -49,16 +49,25 @@ const TheoryEngine = {
         let cumulative = 0;
         const semitoneSteps = [0, ...modeIntervals.map(step => cumulative += step)];
 
+        let cleanRoot = root.replace(/b/g, '♭');
+        let effectiveAlteration = alteration;
+        if (cleanRoot.includes("#")) effectiveAlteration = "#";
+        else if (cleanRoot.includes("♭")) effectiveAlteration = "♭";
+
         // Find index of root note
-        const rootLookup = root + alteration;
-        const indexOfRoot = this.all_notes.findIndex(n => n.includes(rootLookup));
+        const rootLookup = cleanRoot + alteration;
+        let indexOfRoot = this.all_notes.findIndex(n => n.includes(rootLookup));
+        if (indexOfRoot === -1) {
+            indexOfRoot = this.all_notes.findIndex(n => n.includes(cleanRoot));
+        }
+        if (indexOfRoot === -1) indexOfRoot = 0; // Fallback to avoid crash
 
         return semitoneSteps.map(shift => {
             let noteGroup = this.all_notes[(indexOfRoot + shift) % 12];
 
             // Logic to choose the right enharmonic based on alteration
-            if (alteration === "#") return noteGroup.substring(0, 2).replace("♮", "");
-            if (alteration === "♭" || alteration === "b") return noteGroup.slice(-2).replace("♮", "");
+            if (effectiveAlteration === "#") return noteGroup.substring(0, 2).replace("♮", "");
+            if (effectiveAlteration === "♭" || effectiveAlteration === "b") return noteGroup.slice(-2).replace("♮", "");
             return noteGroup.split("♮")[0] || noteGroup[0];
         }).map(n => this.normalizeNote(n)); // Final cleanup to remove natural signs
     },
@@ -88,7 +97,7 @@ const TheoryEngine = {
         if (cleanRoot.includes('#')) { alt = "#"; cleanRoot = cleanRoot.replace('#', ''); }
         else if (cleanRoot.includes('b') || cleanRoot.includes('♭')) { alt = "♭"; cleanRoot = cleanRoot.replace(/[b♭]/, ''); }
 
-        const scale = this.getScale(cleanRoot, "Major/Ionian", alt);
+        const scale = this.getScale12(cleanRoot, "Major/Ionian", alt);
         const match = numeralStr.match(/^(III|VII|IV|VI|II|I|V|iii|vii|iv|vi|ii|i|v)/i);
         if (!match || !scale || scale.length === 0) return null;
 

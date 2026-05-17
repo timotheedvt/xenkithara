@@ -82,6 +82,7 @@ class CustomKeyboard extends HTMLElement {
     }
 
     if (layout === 'isomorphic') {
+      // only for 24EDO
       const notesList = this.defaultKeys.map(k => k.note).slice(0, 24);
       // Standard Wicki-Hayden intervals
       const rightStep = 4;

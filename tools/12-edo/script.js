@@ -79,7 +79,7 @@ scaleCardBtns.forEach(btn => {
     btn.style.padding = '10px 15px';
     btn.title = `Play ${title}`;
 
-    const scaleNotes = TheoryEngine.getScale(root, mode);
+    const scaleNotes = TheoryEngine.getScale12(root, mode);
     scaleNotes.push(scaleNotes[0]); // Add octave for completion
     const notesHtml = scaleNotes.map(n => `<span style="background: var(--bg-dark); padding: 4px 8px; border-radius: 4px; font-size: 0.85em; color: var(--text-muted); border: 1px solid var(--glass);">${n}</span>`).join('');
 
@@ -120,7 +120,7 @@ if (rootSel && modeSel && playBtn && notesContainer) {
     const updateDynamicScale = () => {
         const r = rootSel.value;
         const m = modeSel.value;
-        const notes = TheoryEngine.getScale(r, m);
+        const notes = TheoryEngine.getScale12(r, m);
         notes.push(notes[0]); // Add octave visually
         notesContainer.innerHTML = notes.map(n => `
             <span style="background: var(--bg-dark); padding: 10px 15px; border-radius: 8px; font-weight: bold; color: var(--accent-blue); border: 1px solid var(--glass); box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
