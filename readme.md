@@ -1,10 +1,10 @@
-# myMusicApp
+# XenKithara
 
 ## Overview
-myMusicApp is a comprehensive, interactive web-based music theory and performance hub. It is designed to help musicians, composers, and music theory enthusiasts explore standard Western tuning (12-EDO), microtonal systems (24-EDO), various string instrument tunings, and complex scales or modes directly from their web browser.
+XenKithara is a comprehensive, interactive web-based music theory and performance hub. It is designed to help musicians, composers, and music theory enthusiasts explore standard Western tuning (12-EDO), microtonal systems (24-EDO), various string instrument tunings, and complex scales or modes directly from their web browser.
 
 ## Why This Project Exists
-Music theory can often feel abstract when studied purely on paper, and exploring microtonality (like quarter tones) usually requires specialized software or hardware. myMusicApp was created to bridge this gap by providing an accessible, visual, and immediately playable environment. It centralizes scale generation, chord voicing visualization, and real-time audio synthesis into a single suite of tools, making complex musical concepts easier to understand and hear.
+Music theory can often feel abstract when studied purely on paper, and exploring microtonality (like quarter tones) usually requires specialized software or hardware. XenKithara was created to bridge this gap by providing an accessible, visual, and immediately playable environment. It centralizes scale generation, chord voicing visualization, and real-time audio synthesis into a single suite of tools, making complex musical concepts easier to understand and hear.
 
 ## Features and Possibilities
 
@@ -28,7 +28,7 @@ Built with lightweight web standards, avoiding the overhead of heavy frontend fr
 
 ## Potential Future Features
 
-The architecture of myMusicApp leaves room for extensive future expansions, such as:
+The architecture of XenKithara leaves room for extensive future expansions, such as:
 
 *   **Expanded Microtonal Systems:** Adding support for other tuning systems like 19-EDO, 31-EDO, 53-EDO, or Just Intonation.
 *   **Advanced Synthesizer Controls:** Providing a user interface to adjust envelope (ADSR) parameters, or add effects like reverb and delay.

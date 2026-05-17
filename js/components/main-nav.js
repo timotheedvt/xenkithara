@@ -55,11 +55,34 @@ class MainNav extends HTMLElement {
             }
             .nav-container {
                 display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 5px 15px;
+                position: relative;
+            }
+            .nav-left, .nav-right {
+                display: flex;
+                flex: 1;
+                align-items: center;
+            }
+            .nav-left {
+                justify-content: flex-start;
+            }
+            .nav-right {
+                justify-content: flex-end;
+            }
+            .nav-links {
+                display: flex;
                 justify-content: center;
                 align-items: center;
                 gap: 10px;
-                padding: 5px 10px;
-                flex-wrap: wrap; /* Allows buttons to wrap on small phones */
+                flex-wrap: wrap;
+            }
+            .brand-name {
+                font-size: 1.2em;
+                font-weight: 800;
+                color: var(--accent-blue);
+                white-space: nowrap;
             }
             .nav-btn {
                 background: none;
@@ -101,9 +124,25 @@ class MainNav extends HTMLElement {
             #audio-toggle:hover {
                 transform: scale(1.1);
                 background: var(--glass);
+            }
             /* Mobile Adjustments */
-            @media (max-width: 600px) {
+            @media (max-width: 850px) {
                 .nav-container {
+                    flex-direction: column;
+                    gap: 10px;
+                    padding-top: 10px;
+                }
+                .nav-left {
+                    justify-content: center;
+                }
+                .nav-right {
+                    position: absolute;
+                    top: 10px;
+                    right: 15px;
+                }
+            }
+            @media (max-width: 600px) {
+                .nav-links {
                     gap: 5px;
                 }
                 .nav-btn {
@@ -115,15 +154,20 @@ class MainNav extends HTMLElement {
         <nav class="main-nav">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
             <div class="nav-container">
-                <a href="${root}index.html" class="nav-btn ${activeTab === 'home' ? 'active' : ''}"><i class="fa fa-home"></i></a>
-                <a href="${root}tools/harmonic_interface/index.html" class="nav-btn ${activeTab === 'harmonic' ? 'active' : ''}">Harmonic Interface</a>
-                <a href="${root}tools/modes_scales/index.html" class="nav-btn ${activeTab === 'modes' ? 'active' : ''}">Scales & modes</a>
-                <a href="${root}tools/12-edo/index.html" class="nav-btn ${activeTab === 'mindmap' ? 'active' : ''}">12-EDO theory</a>
-                <a href="${root}tools/24-edo/index.html" class="nav-btn ${activeTab === '24edo' ? 'active' : ''}">24-EDO theory</a>
-
-                <button id="audio-toggle" title="Toggle Sound">
-                    <i class="fa fa-volume-up"></i>
-                </button>
+                <div class="nav-left">
+                    <span class="brand-name"><a style="text-decoration:none; color: var(--accent-blue);" href="${root}index.html">XenKithara</a></span>
+                </div>
+                <div class="nav-links">
+                    <a href="${root}tools/harmonic_interface/index.html" class="nav-btn ${activeTab === 'harmonic' ? 'active' : ''}">Harmonic Interface</a>
+                    <a href="${root}tools/modes_scales/index.html" class="nav-btn ${activeTab === 'modes' ? 'active' : ''}">Scales & modes</a>
+                    <a href="${root}tools/12-edo/index.html" class="nav-btn ${activeTab === 'mindmap' ? 'active' : ''}">12-EDO theory</a>
+                    <a href="${root}tools/24-edo/index.html" class="nav-btn ${activeTab === '24edo' ? 'active' : ''}">24-EDO theory</a>
+                </div>
+                <div class="nav-right">
+                    <button id="audio-toggle" title="Toggle Sound">
+                        <i class="fa fa-volume-up"></i>
+                    </button>
+                </div>
             </div>
         </nav>
         `;
