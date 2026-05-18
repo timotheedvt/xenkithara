@@ -34,3 +34,8 @@ The architecture of XenKithara leaves room for extensive future expansions, such
 *   **Advanced Synthesizer Controls:** Providing a user interface to adjust envelope (ADSR) parameters, or add effects like reverb and delay.
 *   **Sequencer and Looper:** A built-in multi-track sequencer allowing users to record chord progressions, loop them, and practice scales over the playback.
 *   **Sheet Music and Staff Visualization:** Generating standard notation or tablature dynamically based on the notes played or scales selected.
+
+## FAQ
+
+*  **Is it any good ?**
+-- Yes.
