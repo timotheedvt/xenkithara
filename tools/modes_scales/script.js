@@ -1,6 +1,7 @@
 let currentTuning = "EADGBE";
 let currentStringsCount = 6;
 let checkedNotes = [];
+let is24edoActive = false;
 const grid = document.getElementById('grid');
 
 // Standardized mapping to 12 semitones
@@ -48,12 +49,58 @@ function initCheckboxes() {
 
 function initModes() {
     const modeSelect = document.getElementById('mode-select');
-    Object.keys(TheoryEngine.modes).forEach(mode => {
-        const option = document.createElement('option');
-        option.value = mode;
-        option.text = mode;
-        modeSelect.appendChild(option);
-    });
+    const currentValue = modeSelect.value;
+    modeSelect.innerHTML = ""; // Clear existing
+
+    if (is24edoActive) {
+        const group12 = document.createElement('optgroup');
+        group12.label = "12-EDO Modes";
+        Object.keys(TheoryEngine.modes).forEach(mode => {
+            const option = document.createElement('option');
+            option.value = mode;
+            option.text = mode;
+            group12.appendChild(option);
+        });
+        modeSelect.appendChild(group12);
+
+        const group24 = document.createElement('optgroup');
+        group24.label = "24-EDO Modes";
+
+        if (TheoryEngine.modes_24_categories && Object.keys(TheoryEngine.modes_24_categories).length > 0) {
+            Object.keys(TheoryEngine.modes_24_categories).forEach(category => {
+                const separator = document.createElement('option');
+                separator.disabled = true;
+                separator.text = `── ${category} ──`;
+                group24.appendChild(separator);
+
+                TheoryEngine.modes_24_categories[category].forEach(mode => {
+                    const option = document.createElement('option');
+                    option.value = mode;
+                    option.text = mode;
+                    group24.appendChild(option);
+                });
+            });
+        } else {
+            Object.keys(TheoryEngine.modes_24).forEach(mode => {
+                const option = document.createElement('option');
+                option.value = mode;
+                option.text = mode;
+                group24.appendChild(option);
+            });
+        }
+        modeSelect.appendChild(group24);
+    } else {
+        Object.keys(TheoryEngine.modes).forEach(mode => {
+            const option = document.createElement('option');
+            option.value = mode;
+            option.text = mode;
+            modeSelect.appendChild(option);
+        });
+    }
+
+    if (currentValue && Array.from(modeSelect.options).some(opt => opt.value === currentValue)) {
+        modeSelect.value = currentValue;
+    }
 }
 
 function writeTune() {
@@ -61,7 +108,20 @@ function writeTune() {
     const alt = document.getElementById('alt-select').value;
     const modeKey = document.getElementById('mode-select').value;
 
-    const rawScale = TheoryEngine.getScale12(root, modeKey, alt);
+    let rawScale = [];
+
+    if (is24edoActive && TheoryEngine.modes_24[modeKey]) {
+        let rawRoot = root + (alt !== '♮' ? alt : '');
+        let rootNote = noteToSemitone[rawRoot] || rawRoot;
+        rawScale = TheoryEngine.getScale24(rootNote, modeKey);
+
+        if (!rawScale || rawScale.length === 0) {
+            rawScale = TheoryEngine.getScale12(root, modeKey, alt);
+        }
+    } else {
+        rawScale = TheoryEngine.getScale12(root, modeKey, alt);
+    }
+
     const boxes = document.querySelectorAll('.note-check');
     boxes.forEach(b => b.checked = false);
 
@@ -135,8 +195,9 @@ function changeStringCount() {
         }
 
         text = document.getElementById("custom-tuning")
-        text.style.visibility = "visible"
-        text.style.display = "block"
+        text.disabled = false;
+        text.style.cursor = ""
+        text.style.opacity = 1;
         text.placeholder = currentTuning;
     }
     writeTune();
@@ -149,12 +210,16 @@ function changeTuning() {
     if (getSelectedOption(tuningMode).value != "CUSTOM") {
         currentTuning = getSelectedOption(tuningMode).value;
         text = document.getElementById("custom-tuning")
-        text.style.visibility = "hidden"
+        // stay visible but disable text input
+        text.disabled = true;
+        text.style.cursor = "not-allowed";
+        text.style.opacity = 0.3;
         writeTune()
     } else {
-        text = document.getElementById("custom-tuning")
-        text.style.visibility = "visible"
-        text.style.display = "block"
+        text = document.getElementById("custom-tuning");
+        text.disabled = false;
+        text.style.cursor = ""
+        text.style.opacity = 1;
         text.placeholder = currentTuning;
     }
     updateVisuals();
@@ -194,9 +259,12 @@ function onTuningChange() {
 
 function onEDOChange() {
     const value = document.getElementById("is24edoToggle").checked;
+    is24edoActive = value;
     document.getElementById("grid").setAttribute("is24edo", value);
     notesArr = value ? TheoryEngine.base_notes_24 : TheoryEngine.base_notes_12;
     initCheckboxes();
+    initModes();
+    writeTune();
     updateVisuals();
 }
 

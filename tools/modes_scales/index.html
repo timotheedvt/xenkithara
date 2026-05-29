@@ -49,6 +49,10 @@
                 </div>
 
                 <div class="controls-row">
+                    <span>
+                        <input type="checkbox" id="is24edoToggle" onclick="onEDOChange();">
+                        <label for="is24edoToggle">24edo</label>
+                    </span>
                     <select id="tune-select" onchange="writeTune()">
                         <option value="C" selected>C</option>
                         <option value="D">D</option>
@@ -80,10 +84,6 @@
 
                     <input type="text" id="custom-tuning" placeholder="EADGBE" autocapitalize="characters"
                         onkeypress="onTuningChange();">
-
-                    <input type="checkbox" id="is24edoToggle" onclick="onEDOChange();">
-                    <label for="is24edoToggle">24edo</label>
-
                 </div>
             </form>
         </div>
