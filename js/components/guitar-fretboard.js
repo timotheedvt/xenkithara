@@ -1,13 +1,11 @@
 class GuitarFretboard extends HTMLElement {
     static get observedAttributes() {
-        return ['strings', 'tuning', 'notes', 'width', 'height'];
+        return ['strings', 'tuning', 'notes', 'width', 'height', 'is24edo'];
     }
 
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        this.notesArr = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-        this.fretToDraw = [0, 5, 7, 10, 12];
         this.hitboxes = [];
     }
 
@@ -25,6 +23,12 @@ class GuitarFretboard extends HTMLElement {
         const activeNotes = (this.getAttribute('notes') || "").split(/[\s,]+/).filter(n => n);
         const width = parseInt(this.getAttribute('width')) || 800;
         const height = parseInt(this.getAttribute('height')) || 250;
+        const is24edo = this.getAttribute('is24edo') === 'true';
+
+        this.fretToDraw = is24edo ? [0, 10, 14, 18, 24] :[0, 5, 7, 9, 12];
+        this.notesArr = is24edo
+            ? TheoryEngine.base_notes_24
+            : TheoryEngine.base_notes_12;
 
         this.shadowRoot.innerHTML = `
             <style>
@@ -37,7 +41,7 @@ class GuitarFretboard extends HTMLElement {
         const canvas = this.shadowRoot.getElementById('fretboard');
         const ctx = canvas.getContext('2d');
         this.hitboxes = []; // Reset hitboxes before rendering
-        this.drawFretboard(ctx, width, height, stringsCount, tuning, activeNotes);
+        this.drawFretboard(ctx, width, height, stringsCount, tuning, activeNotes, is24edo);
 
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
@@ -64,13 +68,15 @@ class GuitarFretboard extends HTMLElement {
         });
     }
 
-    drawFretboard(ctx, w, h, stringsCount, tuning, activeNotes) {
+    drawFretboard(ctx, w, h, stringsCount, tuning, activeNotes, is24edo) {
         const offsetX = 40;
         const offsetY = 20;
         const boardWidth = w - (offsetX * 2);
         const boardHeight = h - (offsetY * 2);
         const spaceBetweenStrings = boardHeight / (stringsCount - 1);
-        const spaceBetweenFrets = boardWidth / 15;
+        const fretCount = is24edo ? 30 : 15;
+        const spaceBetweenFrets = boardWidth / fretCount;
+        const edo = (is24edo ? 24 : 12)
 
         // Draw strings and frets
         ctx.strokeStyle = "#AEB2B2";
@@ -84,7 +90,7 @@ class GuitarFretboard extends HTMLElement {
             ctx.stroke();
         }
 
-        for (let i = 0; i <= 15; i++) {
+        for (let i = 0; i <= fretCount; i++) {
             let x = offsetX + (i * spaceBetweenFrets);
             ctx.lineWidth = i === 0 ? 4 : 1;
             ctx.beginPath();
@@ -93,12 +99,12 @@ class GuitarFretboard extends HTMLElement {
             ctx.stroke();
 
             // Fret markers
-            if (this.fretToDraw.includes(i % 12) && i !== 0) {
+            if (this.fretToDraw.includes(i % edo) && i !== 0) {
                 ctx.fillStyle = "#AEB2B2";
-                let midX = x - (spaceBetweenFrets / 2);
+                let midX = x - (is24edo ? spaceBetweenFrets : (spaceBetweenFrets / 2));
                 let midY = offsetY + (boardHeight / 2);
                 ctx.beginPath();
-                if (i % 12 === 0) { // Double dot for octave
+                if (i % edo === 0) { // Double dot for octave
                     ctx.arc(midX, midY - spaceBetweenStrings, 4, 0, Math.PI * 2);
                     ctx.arc(midX, midY + spaceBetweenStrings, 4, 0, Math.PI * 2);
                 } else {
@@ -118,7 +124,7 @@ class GuitarFretboard extends HTMLElement {
                 // We assume standard index: tuning[0] is bottom visual string.
                 let openNote = tuning[stringsCount - 1 - sIdx] || "E";
                 let startIdx = this.notesArr.indexOf(openNote);
-                let fret = (targetIdx - startIdx + 12) % 12;
+                let fret = (targetIdx - startIdx + edo) % edo;
 
                 const radius = spaceBetweenFrets / 3.5;
                 const drawNote = (f, xOffset = 0) => {
@@ -140,7 +146,7 @@ class GuitarFretboard extends HTMLElement {
                 };
 
                 drawNote(fret);
-                if (fret <= 3) drawNote(fret + 12); // Show repeats at high frets
+                if (fret <= 3) drawNote(fret + edo); // Show repeats at high frets
             }
         });
     }

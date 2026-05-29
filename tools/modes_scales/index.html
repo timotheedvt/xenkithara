@@ -11,7 +11,7 @@
     <script src="../../js/core/audio-manager.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="../../js/components/main-nav.js" defer></script>
-    <script src="../../js/components/guitar-fretboard.js"></script>
+    <script src="../../js/components/guitar-fretboard.js" type="module"></script>
 
     <link rel="icon" type="image/png" href="../../assets/icon.png" />
 
@@ -29,6 +29,7 @@
                 notes="C, E, G"
                 width="900"
                 height="300"
+                is24edo="true"
                 id="grid">
             </guitar-fretboard>
         </div>
@@ -79,6 +80,10 @@
 
                     <input type="text" id="custom-tuning" placeholder="EADGBE" autocapitalize="characters"
                         onkeypress="onTuningChange();">
+
+                    <input type="checkbox" id="is24edoToggle" onclick="onEDOChange();">
+                    <label for="is24edoToggle">24edo</label>
+
                 </div>
             </form>
         </div>

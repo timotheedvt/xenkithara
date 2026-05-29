@@ -14,8 +14,7 @@ const noteToSemitone = {
 };
 
 const fretToDraw = [ 0, 5, 7, 10, 12 ];
-
-const notesArr = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+let notesArr = TheoryEngine.base_notes_12;
 
 window.addEventListener('DOMContentLoaded', () => {
     currentStringsCount = document.getElementById("string-number").value;
@@ -27,9 +26,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function initCheckboxes() {
     const container = document.getElementById('checkbox-container');
+    while (container.firstChild) {
+        container.removeChild(container.lastChild);
+    }
     notesArr.forEach(n => {
         const label = document.createElement('label');
-        label.innerHTML = `${n} <input type="checkbox" value="${n}" class="note-check"> `;
+        label.innerHTML = `${n} <input type="checkbox" value="${n}" class="note-check" ${checkedNotes.includes(n) ? 'checked' : ''}> `;
         label.querySelector('input').addEventListener('change', (e) => {
             const note = e.target.value;
             if (e.target.checked) {
@@ -171,8 +173,8 @@ function getSelectedOption(sel) {
 };
 
 function onTuningChange() {
-    var key = window.event.keyCode;
-    t = document.getElementById("custom-tuning").value
+    const key = window.event.keyCode;
+    let t = document.getElementById("custom-tuning").value
     document.getElementById("custom-tuning").value = t.toUpperCase()
 
     if (key === 13) {
@@ -188,6 +190,14 @@ function onTuningChange() {
     else {
         return true;
     }
+}
+
+function onEDOChange() {
+    const value = document.getElementById("is24edoToggle").checked;
+    document.getElementById("grid").setAttribute("is24edo", value);
+    notesArr = value ? TheoryEngine.base_notes_24 : TheoryEngine.base_notes_12;
+    initCheckboxes();
+    updateVisuals();
 }
 
 document.getElementById('toggle-footer').addEventListener('click', () => {
