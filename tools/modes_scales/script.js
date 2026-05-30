@@ -198,11 +198,13 @@ function updateChordTable() {
 
             btn.addEventListener('mouseenter', () => {
                 grid.setAttribute("notes", chord.notes.join(", "));
+                grid.setAttribute("colored", "true");
                 grid.update();
             });
 
             btn.addEventListener('mouseleave', () => {
                 grid.setAttribute("notes", checkedNotes.join(", "));
+                grid.removeAttribute("colored");
                 grid.update();
             });
 

@@ -1,6 +1,6 @@
 class GuitarFretboard extends HTMLElement {
     static get observedAttributes() {
-        return ['strings', 'tuning', 'notes', 'width', 'height', 'is24edo'];
+        return ['strings', 'tuning', 'notes', 'width', 'height', 'is24edo', 'colored'];
     }
 
     constructor() {
@@ -24,6 +24,7 @@ class GuitarFretboard extends HTMLElement {
         const width = parseInt(this.getAttribute('width')) || 800;
         const height = parseInt(this.getAttribute('height')) || 250;
         const is24edo = this.getAttribute('is24edo') === 'true';
+        const colored = this.getAttribute('colored') === 'true';
 
         this.fretToDraw = is24edo ? [0, 10, 14, 18, 24] :[0, 5, 7, 9, 12];
         this.notesArr = is24edo
@@ -41,7 +42,7 @@ class GuitarFretboard extends HTMLElement {
         const canvas = this.shadowRoot.getElementById('fretboard');
         const ctx = canvas.getContext('2d');
         this.hitboxes = []; // Reset hitboxes before rendering
-        this.drawFretboard(ctx, width, height, stringsCount, tuning, activeNotes, is24edo);
+        this.drawFretboard(ctx, width, height, stringsCount, tuning, activeNotes, is24edo, colored);
 
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
@@ -68,7 +69,7 @@ class GuitarFretboard extends HTMLElement {
         });
     }
 
-    drawFretboard(ctx, w, h, stringsCount, tuning, activeNotes, is24edo) {
+    drawFretboard(ctx, w, h, stringsCount, tuning, activeNotes, is24edo, colored) {
         const offsetX = 40;
         const offsetY = 20;
         const boardWidth = w - (offsetX * 2);
@@ -78,8 +79,12 @@ class GuitarFretboard extends HTMLElement {
         const spaceBetweenFrets = boardWidth / fretCount;
         const edo = (is24edo ? 24 : 12)
 
+        const style = window.getComputedStyle(document.documentElement);
+        const colorTextWhite = style.getPropertyValue('--text-white').trim() || "#AEB2B2";
+        const colorTextDark = style.getPropertyValue('--text-dark').trim() || "#1C1C1C";
+
         // Draw strings and frets
-        ctx.strokeStyle = "#AEB2B2";
+        ctx.strokeStyle = colorTextWhite;
         ctx.lineWidth = 1;
 
         for (let i = 0; i < stringsCount; i++) {
@@ -100,7 +105,7 @@ class GuitarFretboard extends HTMLElement {
 
             // Fret markers
             if (this.fretToDraw.includes(i % edo) && i !== 0) {
-                ctx.fillStyle = "#AEB2B2";
+                ctx.fillStyle = colorTextWhite;
                 let midX = x - (is24edo ? spaceBetweenFrets : (spaceBetweenFrets / 2));
                 let midY = offsetY + (boardHeight / 2);
                 ctx.beginPath();
@@ -114,10 +119,22 @@ class GuitarFretboard extends HTMLElement {
             }
         }
 
+        const palette = [
+            style.getPropertyValue('--accent-blue').trim() || "#6F8FF0",
+            style.getPropertyValue('--accent-red').trim() || "#FE5658",
+            style.getPropertyValue('--accent-yellow').trim() || "#FDE87B",
+            style.getPropertyValue('--accent-green').trim() || "#1E5128",
+            style.getPropertyValue('--dark-blue').trim() || "#002cb1",
+            style.getPropertyValue('--accent-orange').trim() || "#413C26",
+            style.getPropertyValue('--text-white').trim() || "#AEB2B2"
+        ];
+
         // Draw Active Notes
-        activeNotes.forEach(note => {
+        activeNotes.forEach((note, index) => {
             const targetIdx = this.notesArr.indexOf(note);
             if (targetIdx === -1) return;
+
+            const noteColor = colored ? palette[index % palette.length] : palette[0];
 
             for (let sIdx = 0; sIdx < stringsCount; sIdx++) {
                 // Tuning is typically defined from high string to low or low to high.
@@ -134,11 +151,11 @@ class GuitarFretboard extends HTMLElement {
                     this.hitboxes.push({ x, y, radius, note });
 
                     ctx.beginPath();
-                    ctx.fillStyle = "#6F8FF0"; // --accent-blue
+                    ctx.fillStyle = noteColor; // Dynamically colored or default blue
                     ctx.arc(x, y, radius, 0, Math.PI * 2);
                     ctx.fill();
 
-                    ctx.fillStyle = "#1C1C1C"; // --bg-dark
+                    ctx.fillStyle = colorTextDark;
                     ctx.font = `bold ${radius}px Inter`;
                     ctx.textAlign = "center";
                     ctx.textBaseline = "middle";
