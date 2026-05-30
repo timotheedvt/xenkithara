@@ -1,6 +1,6 @@
 class GuitarFretboard extends HTMLElement {
     static get observedAttributes() {
-        return ['strings', 'tuning', 'notes', 'width', 'height', 'is24edo', 'colored'];
+        return ['strings', 'tuning', 'notes', 'width', 'height', 'is24edo', 'colored', 'fret-numbers'];
     }
 
     constructor() {
@@ -25,8 +25,9 @@ class GuitarFretboard extends HTMLElement {
         const height = parseInt(this.getAttribute('height')) || 250;
         const is24edo = this.getAttribute('is24edo') === 'true';
         const colored = this.getAttribute('colored') === 'true';
+        const fretNumbersMode = this.getAttribute('fret-numbers');
 
-        this.fretToDraw = is24edo ? [0, 10, 14, 18, 24] :[0, 5, 7, 9, 12];
+        this.fretToDraw = is24edo ? [0, 6, 10, 14, 18, 24] :[0, 5, 7, 9, 12];
         this.notesArr = is24edo
             ? TheoryEngine.base_notes_24
             : TheoryEngine.base_notes_12;
@@ -42,7 +43,7 @@ class GuitarFretboard extends HTMLElement {
         const canvas = this.shadowRoot.getElementById('fretboard');
         const ctx = canvas.getContext('2d');
         this.hitboxes = []; // Reset hitboxes before rendering
-        this.drawFretboard(ctx, width, height, stringsCount, tuning, activeNotes, is24edo, colored);
+        this.drawFretboard(ctx, width, height, stringsCount, tuning, activeNotes, is24edo, colored, fretNumbersMode);
 
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
@@ -69,9 +70,9 @@ class GuitarFretboard extends HTMLElement {
         });
     }
 
-    drawFretboard(ctx, w, h, stringsCount, tuning, activeNotes, is24edo, colored) {
+    drawFretboard(ctx, w, h, stringsCount, tuning, activeNotes, is24edo, colored, fretNumbersMode) {
         const offsetX = 40;
-        const offsetY = 20;
+        const offsetY = 30;
         const boardWidth = w - (offsetX * 2);
         const boardHeight = h - (offsetY * 2);
         const spaceBetweenStrings = boardHeight / (stringsCount - 1);
@@ -116,6 +117,18 @@ class GuitarFretboard extends HTMLElement {
                     ctx.arc(midX, midY, 4, 0, Math.PI * 2);
                 }
                 ctx.fill();
+
+                // Fret numbers
+                if (fretNumbersMode && fretNumbersMode !== "none" && fretNumbersMode !== "false") {
+                    let textToDraw = i.toString();
+                    if (is24edo && fretNumbersMode === "12edo") {
+                        textToDraw = (i / 2).toString();
+                    }
+                    ctx.font = "bold 12px Inter";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "bottom";
+                    ctx.fillText(textToDraw, midX, h - 2);
+                }
             }
         }
 

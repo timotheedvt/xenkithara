@@ -287,6 +287,11 @@ function onTuningChange() {
     }
 }
 
+function changeFretNumbers() {
+    const val = document.getElementById('fret-numbers-select').value;
+    document.getElementById('grid').setAttribute("fret-numbers", val);
+}
+
 function onEDOChange() {
     const value = document.getElementById("is24edoToggle").checked;
     is24edoActive = value;

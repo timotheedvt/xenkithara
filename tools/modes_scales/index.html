@@ -30,6 +30,7 @@
                 width="900"
                 height="300"
                 is24edo="false"
+                fret-numbers="true"
                 id="grid">
             </guitar-fretboard>
         </div>
@@ -84,6 +85,12 @@
 
                     <input type="text" id="custom-tuning" placeholder="EADGBE" autocapitalize="characters"
                         onkeypress="onTuningChange();">
+
+                    <select id="fret-numbers-select" onchange="changeFretNumbers()">
+                        <option value="none">No Fret Numbers</option>
+                        <option value="true" selected>Standard Numbers</option>
+                        <option value="12edo">12-EDO Equivalents</option>
+                    </select>
                 </div>
             </form>
         </div>
