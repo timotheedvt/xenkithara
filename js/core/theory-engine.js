@@ -14,6 +14,42 @@ const TheoryEngine = {
     modes_24: typeof modes_24 !== 'undefined' ? modes_24 : {},
     modes_24_categories: typeof modes_24_categories !== 'undefined' ? modes_24_categories : {},
 
+    // Interval definitions for finding compatible chords
+    chord_definitions_12: {
+        "5": [0, 7],
+        "M": [0, 4, 7],
+        "m": [0, 3, 7],
+        "dim": [0, 3, 6],
+        "aug": [0, 4, 8],
+        "sus2": [0, 2, 7],
+        "sus4": [0, 5, 7],
+        "maj7": [0, 4, 7, 11],
+        "m7": [0, 3, 7, 10],
+        "7": [0, 4, 7, 10],
+        "m7b5": [0, 3, 6, 10],
+        "dim7": [0, 3, 6, 9],
+        "mM7": [0, 3, 7, 11]
+    },
+
+    chord_definitions_24: {
+        "5": [0, 14],
+        "M": [0, 8, 14],
+        "m": [0, 6, 14],
+        "N": [0, 7, 14],
+        "mv": [0, 5, 14],
+        "m^": [0, 9, 14],
+        "dim": [0, 6, 12],
+        "aug": [0, 8, 16],
+        "sus2": [0, 4, 14],
+        "sus4": [0, 10, 14],
+        "maj7": [0, 8, 14, 22],
+        "m7": [0, 6, 14, 20],
+        "7": [0, 8, 14, 20],
+        "N 7": [0, 7, 14, 20],
+        "m7b5": [0, 6, 12, 20],
+        "dim7": [0, 6, 12, 18]
+    },
+
     // Chord qualities for each mode degree
     chords_charts: {
         "Major/Ionian": "MmmMMmd",
@@ -85,6 +121,90 @@ const TheoryEngine = {
         return quarterToneSteps.map(shift => {
             return this.base_notes_24[(indexOfRoot + shift) % 24];
         });
+    },
+
+    /**
+     * Formats a chord name with sub and sup tags for beautiful UI rendering.
+     * e.g., formatChordName("D‡", "m^") -> "D<sub>m</sub><sup>‡^</sup>"
+     */
+    formatChordName(root, quality) {
+        let noteBase = root.charAt(0);
+        let accidental = root.slice(1);
+
+        let sub = "";
+        let qSup = "";
+
+        if (quality.startsWith("mM")) {
+            sub = "m";
+            qSup = quality.slice(1);
+        } else if (quality.startsWith("maj")) {
+            sub = "maj";
+            qSup = quality.slice(3);
+        } else if (quality.startsWith("m")) {
+            sub = "m";
+            qSup = quality.slice(1);
+        } else if (quality.startsWith("dim")) {
+            sub = "dim";
+            qSup = quality.slice(3);
+        } else if (quality.startsWith("aug")) {
+            sub = "aug";
+            qSup = quality.slice(3);
+        } else if (quality.startsWith("sus")) {
+            sub = "sus";
+            qSup = quality.slice(3);
+        } else if (quality.startsWith("M")) {
+            sub = "M";
+            qSup = quality.slice(1);
+        } else if (quality.startsWith("N")) {
+            sub = "N";
+            qSup = quality.slice(1);
+        } else {
+            qSup = quality; // Captures bare numbers like "5", "7"
+        }
+
+        let sup = accidental + qSup.trim();
+
+        let html = noteBase;
+        if (sub) html += `<sub>${sub}</sub>`;
+        if (sup) html += `<sup>${sup}</sup>`;
+
+        return html;
+    },
+
+    /**
+     * Finds all possible chords that can be constructed using only the provided notes.
+     * @param {Array<string>} availableNotes - Array of active note names.
+     * @param {number} edo - Divisions of the octave (12 or 24).
+     */
+    findCompatibleChords(availableNotes, edo = 12) {
+        const baseNotes = edo === 24 ? this.base_notes_24 : this.base_notes_12;
+        const chordDefs = edo === 24 ? this.chord_definitions_24 : this.chord_definitions_12;
+
+        const noteIndices = new Set(
+            availableNotes.map(n => baseNotes.indexOf(n)).filter(i => i !== -1)
+        );
+
+        const results = {};
+
+        for (let rootIdx of noteIndices) {
+            let rootName = baseNotes[rootIdx];
+            results[rootName] = [];
+
+            for (let [chordName, intervals] of Object.entries(chordDefs)) {
+                let isMatch = intervals.every(interval => noteIndices.has((rootIdx + interval) % edo));
+
+                if (isMatch) {
+                    results[rootName].push({
+                        name: rootName + chordName,
+                        formattedName: this.formatChordName(rootName, chordName),
+                        shortName: chordName,
+                        intervals: intervals,
+                        notes: intervals.map(i => baseNotes[(rootIdx + i) % edo])
+                    });
+                }
+            }
+        }
+        return results;
     },
 
     /**

@@ -136,7 +136,6 @@ function writeTune() {
     });
 
     updateVisuals();
-    updateChordTable(rawScale, modeKey);
 }
 
 function updateVisuals() {
@@ -144,41 +143,70 @@ function updateVisuals() {
     grid.setAttribute("strings", currentStringsCount);
     grid.setAttribute("tuning", currentTuning);
     grid.update();
+    updateChordTable();
 }
 
-function updateChordTable(scale, modeKey) {
+function updateChordTable() {
     const table = document.getElementById('chord-table');
     table.innerHTML = "";
-    const chart = TheoryEngine.chords_charts[modeKey];
-    if (!chart) return;
 
-    let headRow = table.insertRow();
-    let dataRow = table.insertRow();
+    const edo = is24edoActive ? 24 : 12;
+    const compatibleChords = TheoryEngine.findCompatibleChords(checkedNotes, edo);
+    const baseNotes = is24edoActive ? TheoryEngine.base_notes_24 : TheoryEngine.base_notes_12;
 
-    scale.forEach((note, i) => {
-        if (i >= chart.length) return;
-        let quality = chart[i];
-        let roman = TheoryEngine.getRomanNumeral(i + 1, quality);
-        note = TheoryEngine.normalizeNote(note); // Ensure we have a standardized note name
-        let chordName = note + (quality === 'M' ? '' : quality === 'd' ? '°' : quality);
+    const rootsWithChords = Object.keys(compatibleChords).filter(root => compatibleChords[root].length > 0);
+    rootsWithChords.sort((a, b) => baseNotes.indexOf(a) - baseNotes.indexOf(b));
 
-        let hCell = headRow.insertCell();
-        hCell.innerText = roman;
+    if (rootsWithChords.length === 0) {
+        table.innerHTML = "<tr><td style='padding: 10px; color: var(--text-muted); text-align: center;'>No valid chords found with current notes.</td></tr>";
+        return;
+    }
 
-        let dCell = dataRow.insertCell();
-        dCell.innerText = chordName;
-        dCell.style.cursor = "pointer";
-        dCell.title = "Play " + chordName + " chord";
+    rootsWithChords.forEach(root => {
+        const chords = compatibleChords[root];
 
-        dCell.addEventListener('click', () => {
-            if (!window.AudioManager) return;
-            const rootFreq = TheoryEngine.getSimpleFrequency(note);
-            if (!rootFreq) return;
+        let row = table.insertRow();
 
-            const st3 = (quality === 'm' || quality === 'd') ? 3 : 4;
-            const st5 = (quality === 'd') ? 6 : 7;
+        let rootCell = row.insertCell();
+        rootCell.innerText = root;
+        rootCell.style.fontWeight = "bold";
+        rootCell.style.color = "var(--accent-blue)";
+        rootCell.style.padding = "10px 15px";
+        rootCell.style.verticalAlign = "middle";
+        rootCell.style.borderRight = "1px solid var(--glass)";
 
-            AudioManager.playNotes([rootFreq, rootFreq * Math.pow(2, st3/12), rootFreq * Math.pow(2, st5/12)], 0.25);
+        let chordsCell = row.insertCell();
+        chordsCell.style.padding = "10px";
+        chordsCell.style.display = "flex";
+        chordsCell.style.flexWrap = "wrap";
+        chordsCell.style.gap = "8px";
+
+        chords.forEach(chord => {
+            let btn = document.createElement("button");
+            btn.innerHTML = chord.formattedName;
+            btn.title = "Notes: " + chord.notes.join(", ");
+            btn.className = "chord-btn";
+
+            btn.addEventListener('click', () => {
+                if (!window.AudioManager) return;
+                const rootFreq = TheoryEngine.getSimpleFrequency(root, edo);
+                if (!rootFreq) return;
+
+                const freqs = chord.intervals.map(interval => rootFreq * Math.pow(2, interval / edo));
+                AudioManager.playNotes(freqs, 0.4);
+            });
+
+            btn.addEventListener('mouseenter', () => {
+                grid.setAttribute("notes", chord.notes.join(", "));
+                grid.update();
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                grid.setAttribute("notes", checkedNotes.join(", "));
+                grid.update();
+            });
+
+            chordsCell.appendChild(btn);
         });
     });
 }
