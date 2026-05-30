@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 modeSel.value = li.getAttribute('data-scale');
                 updateDynamicScale();
 
-                document.getElementById('scales').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.scrollTo(0, 0);
                 playBtn.click(); // Trigger the play and visual highlight in the explorer
             });
         });
