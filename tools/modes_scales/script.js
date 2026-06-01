@@ -279,7 +279,7 @@ function onTuningChange() {
             writeTune()
             return false;
         } else {
-            alert("L'accordage attendu doit avoir " + currentStringsCount + " cordes sont acceptés.")
+            alert("Tuning must have " + currentStringsCount + " strings.")
         }
     }
     else {
