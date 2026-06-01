@@ -88,20 +88,44 @@ class GuitarFretboard extends HTMLElement {
         ctx.strokeStyle = colorTextWhite;
         ctx.lineWidth = 1;
 
+        const config = {
+            stringsCount,
+            fretCount,
+            width: w,
+            height: h,
+            offsetX, offsetY,
+            boardWidth, boardHeight,
+            spaceBetweenStrings,
+            spaceBetweenFrets,
+            colored
+        }
+
+        this.drawStrings(ctx, config);
+
+        this.drawFrets(ctx, config, is24edo, edo, colorTextWhite, fretNumbersMode);
+
+        this.drawActivesNotes(ctx, activeNotes, config, style, tuning, edo, colorTextDark);
+    }
+
+    drawStrings(ctx, config) {
+        const {stringsCount, width, offsetX, offsetY, spaceBetweenStrings} = config;
         for (let i = 0; i < stringsCount; i++) {
             let y = offsetY + (i * spaceBetweenStrings);
             ctx.beginPath();
             ctx.moveTo(offsetX, y);
-            ctx.lineTo(w - offsetX, y);
+            ctx.lineTo(width - offsetX, y);
             ctx.stroke();
         }
+    }
 
+    drawFrets(ctx, config, is24edo, edo, colorTextWhite, fretNumbersMode) {
+        const {fretCount, height, boardHeight, offsetX, offsetY, spaceBetweenStrings, spaceBetweenFrets} = config;
         for (let i = 0; i <= fretCount; i++) {
             let x = offsetX + (i * spaceBetweenFrets);
             ctx.lineWidth = i === 0 ? 4 : 1;
             ctx.beginPath();
             ctx.moveTo(x, offsetY);
-            ctx.lineTo(x, h - offsetY);
+            ctx.lineTo(x, height - offsetY);
             ctx.stroke();
 
             // Fret markers
@@ -127,11 +151,14 @@ class GuitarFretboard extends HTMLElement {
                     ctx.font = "bold 12px Inter";
                     ctx.textAlign = "center";
                     ctx.textBaseline = "bottom";
-                    ctx.fillText(textToDraw, midX, h - 2);
+                    ctx.fillText(textToDraw, midX, height - 2);
                 }
             }
         }
+    }
 
+    drawActivesNotes(ctx, activeNotes, config, style, tuning, edo, colorTextDark) {
+        const {offsetX, offsetY, colored, stringsCount, spaceBetweenFrets, spaceBetweenStrings} = config;
         const palette = [
             style.getPropertyValue('--accent-blue').trim() || "#6F8FF0",
             style.getPropertyValue('--accent-red').trim() || "#FE5658",
@@ -141,8 +168,6 @@ class GuitarFretboard extends HTMLElement {
             style.getPropertyValue('--accent-orange').trim() || "#413C26",
             style.getPropertyValue('--text-white').trim() || "#AEB2B2"
         ];
-
-        // Draw Active Notes
         activeNotes.forEach((note, index) => {
             const targetIdx = this.notesArr.indexOf(note);
             if (targetIdx === -1) return;
