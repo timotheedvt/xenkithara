@@ -44,6 +44,7 @@ class ShellVoicing extends HTMLElement {
         // Dynamic Note Parsing Engine
         if (notesAttr) {
             const strings = ['E', 'B', 'G', 'D', 'A', 'E'];
+            const baseOctaves = [4, 3, 3, 3, 2, 2]; // Standard tuning octaves
             const targetNotes = notesAttr.split(/\s+/).map(n => this.enharmonics[n] || n);
 
             targetNotes.forEach((noteName, index) => {
@@ -59,10 +60,14 @@ class ShellVoicing extends HTMLElement {
                     const fret = (targetNoteIdx - stringBaseIdx + 12) % 12;
                     const fIdx = fret % 3; // Keep within the 3-fret coordinate array domain
 
+                    const fretPitch = (baseOctaves[stringIdx] * 12) + stringBaseIdx + fret;
+                    const actualOctave = Math.floor(fretPitch / 12);
+
                     activeMarkers.push({
                         stringIdx: stringIdx,
                         xPos: Xs[fIdx],
-                        label: noteName
+                        label: noteName,
+                        playNote: noteName + actualOctave
                     });
                 }
             });
@@ -73,7 +78,8 @@ class ShellVoicing extends HTMLElement {
                 return {
                     stringIdx: rootIdx + sOffset,
                     xPos: Xs[fIdx],
-                    label: label
+                    label: label,
+                    fIdx: fIdx
                 };
             });
         }
@@ -167,18 +173,28 @@ class ShellVoicing extends HTMLElement {
         fb.title = "Play Voicing";
         fb.addEventListener('click', () => {
             if (!window.AudioManager) return;
-            const baseFreq = 130.81; // Using a generic C3 base for a movable shape
-            const freqs = activeMarkers.map(m => {
-                if (notesAttr) {
-                    const targetNoteIdx = this.chromaticScale.indexOf(this.enharmonics[m.label] || m.label);
-                    return baseFreq * Math.pow(2, targetNoteIdx / 12);
-                } else {
-                    const intervals = { "R": 0, "b3": 3, "3": 4, "b7": 10, "7": 11, "6": 9 };
-                    const st = intervals[m.label] !== undefined ? intervals[m.label] : 0;
-                    return baseFreq * Math.pow(2, st / 12) * 2; // jump to the octave above
-                }
-            });
-            AudioManager.playNotes(freqs, 0.25);
+
+            let freqs;
+            if (notesAttr) {
+                freqs = activeMarkers.map(m => TheoryEngine.getSimpleFrequency(m.playNote || m.label)).filter(Boolean);
+            } else {
+                // Formula based. This is a movable shape.
+                const rootMarker = activeMarkers.find(m => m.label === "R" || m.label === "R ");
+                const baseOctave = (rootMarker && rootMarker.stringIdx <= 3) ? 'C4' : 'C3';
+                const rootFreq = TheoryEngine.getSimpleFrequency(baseOctave);
+                if (!rootFreq || !rootMarker) return;
+
+                const stringPitches = [24, 19, 15, 10, 5, 0]; // e, B, G, D, A, E
+                freqs = activeMarkers.map(m => {
+                    const deltaString = stringPitches[m.stringIdx] - stringPitches[rootMarker.stringIdx];
+                    const deltaFret = m.fIdx - rootMarker.fIdx;
+                    return rootFreq * Math.pow(2, (deltaString + deltaFret) / 12);
+                }).filter(Boolean);
+            }
+
+            if (freqs.length > 0) {
+                AudioManager.playNotes(freqs, 0.25);
+            }
         });
     }
 }
