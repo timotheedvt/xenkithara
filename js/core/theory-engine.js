@@ -284,13 +284,27 @@ const TheoryEngine = {
     getSimpleFrequency(note, division = 12) {
         note = note.replace("<sup>", "").replace("</sup>", "");
         const base = 440; // A4
-        let noteIndex;
-        const is24edo = division == 24;
-        noteIndex = !is24edo
-            ? this.base_notes_12.findIndex(n => n.includes(note))
-            : this.base_notes_24.findIndex(n => n.includes(note));
+        const is24edo = division === 24;
+
+        // Regex to parse note name and octave. E.g., "C#4" or "C#"
+        const noteRegex = /^([A-G][#b♭‡d]?)([\d]*)/;
+        const match = note.match(noteRegex);
+
+        if (!match) return null;
+
+        const [, noteName, octaveStr] = match;
+
+        const baseNotes = is24edo ? this.base_notes_24 : this.base_notes_12;
+        const noteIndex = baseNotes.indexOf(noteName);
+
         if (noteIndex === -1) return null;
-        return base * Math.pow(2, (noteIndex) / (is24edo ? 24 : 12));
+
+        const octave = octaveStr && octaveStr.length > 0 ? parseInt(octaveStr, 10) : 4; // Default to octave 4
+
+        const a_index = is24edo ? 18 : 9; // 'A' in base_notes
+        const steps_from_a4 = division * (octave - 4) + (noteIndex - a_index);
+
+        return base * Math.pow(2, steps_from_a4 / division);
     }
 };
 

@@ -159,6 +159,7 @@ class GuitarFretboard extends HTMLElement {
 
     drawActivesNotes(ctx, activeNotes, config, style, tuning, edo, colorTextDark) {
         const {offsetX, offsetY, colored, stringsCount, spaceBetweenFrets, spaceBetweenStrings} = config;
+        const stringPitches = this.getStringPitches(tuning, stringsCount, edo);
         const palette = [
             style.getPropertyValue('--accent-blue').trim() || "#6F8FF0",
             style.getPropertyValue('--accent-red').trim() || "#FE5658",
@@ -175,18 +176,22 @@ class GuitarFretboard extends HTMLElement {
             const noteColor = colored ? palette[index % palette.length] : palette[0];
 
             for (let sIdx = 0; sIdx < stringsCount; sIdx++) {
-                // Tuning is typically defined from high string to low or low to high.
-                // We assume standard index: tuning[0] is bottom visual string.
-                let openNote = tuning[stringsCount - 1 - sIdx] || "E";
-                let startIdx = this.notesArr.indexOf(openNote);
+                let stringIdxInTuning = stringsCount - 1 - sIdx;
+                let openPitch = stringPitches[stringIdxInTuning] || 0;
+                let startIdx = openPitch % edo;
                 let fret = (targetIdx - startIdx + edo) % edo;
 
                 const radius = spaceBetweenFrets / 3.5;
                 const drawNote = (f, xOffset = 0) => {
+                    // Calculate accurate octave
+                    let fretPitch = openPitch + f;
+                    let octave = Math.floor(fretPitch / edo);
+                    let noteWithOctave = note + octave;
+
                     let x = offsetX + (f * spaceBetweenFrets) - (f === 0 ? 0 : spaceBetweenFrets / 2) + xOffset;
                     let y = offsetY + (sIdx * spaceBetweenStrings);
 
-                    this.hitboxes.push({ x, y, radius, note });
+                    this.hitboxes.push({ x, y, radius, note: noteWithOctave });
 
                     ctx.beginPath();
                     ctx.fillStyle = noteColor; // Dynamically colored or default blue
@@ -204,6 +209,28 @@ class GuitarFretboard extends HTMLElement {
                 if (fret <= 3) drawNote(fret + edo); // Show repeats at high frets
             }
         });
+    }
+
+    getStringPitches(tuning, stringsCount, edo) {
+        // Calculate base pitches for each string (from lowest to highest)
+        // Assuming tuning string: left is lowest string (e.g., "E" in "EADGBE")
+        let stringPitches = [];
+        let currentPitch = this.notesArr.indexOf(tuning[0] || "E") + 2 * edo; // Start at Octave 2
+        for (let i = 0; i < stringsCount; i++) {
+            let noteChar = tuning[i] || "E";
+            let noteIdx = this.notesArr.indexOf(noteChar);
+            if (noteIdx === -1) noteIdx = 0;
+
+            if (i === 0) {
+                stringPitches.push(currentPitch);
+            } else {
+                let diff = (noteIdx - (currentPitch % edo) + edo) % edo;
+                if (diff === 0 && noteChar !== tuning[i-1]) diff = edo; // Handle octave jumps
+                currentPitch += diff;
+                stringPitches.push(currentPitch);
+            }
+        }
+        return stringPitches;
     }
 
     update() {
